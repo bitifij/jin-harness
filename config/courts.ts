@@ -172,32 +172,32 @@ export const courts: Court[] = [
   },
 
   // ──── yeyak (서울시 공공예약서비스) ────
-  // NOTE: rsv_svc_id 값은 실제 사이트에서 확인 필요
+  // NOTE: 뚝섬한강공원·반포한강공원은 yeyak 검색(sch_text=뚝섬/반포)에 테니스장 자체가
+  // 조회되지 않음 — 애초에 yeyak에 등록된 시설이 아닌 것으로 보여 실제 검색 결과로 교체함
+  // (2026-07-09, /web/search/selectPageListSvcMoreAjax.do 직접 호출로 확인)
   {
-    id: 'yeyak-ddukseom',
-    name: '뚝섬한강공원 테니스장',
+    id: 'yeyak-jamwon',
+    name: '잠원한강공원 테니스장',
     source: 'yeyak',
-    lat: 37.5308,
-    lng: 127.0704,
-    deepLinkTemplate: `${YEYAK}?rsv_svc_id=S230927141830`,
+    lat: 37.52075,
+    lng: 127.01228,
+    deepLinkTemplate: `${YEYAK}?rsv_svc_id=S260628141718667194`,
     slotUnitMinutes: 60,
     info: {
-      address: '서울특별시 광진구 자양동 724',
-      courtCount: 8,
+      address: '서울특별시 서초구 잠원로 221',
       surface: '하드',
     },
   },
   {
-    id: 'yeyak-banpo',
-    name: '반포한강공원 테니스장',
+    id: 'yeyak-gwangnaru',
+    name: '광나루한강공원 테니스장',
     source: 'yeyak',
-    lat: 37.5077,
-    lng: 126.9998,
-    deepLinkTemplate: `${YEYAK}?rsv_svc_id=S220101000001`,
+    lat: 37.54989784603126,
+    lng: 127.12188006433978,
+    deepLinkTemplate: `${YEYAK}?rsv_svc_id=S260629124826190439`,
     slotUnitMinutes: 60,
     info: {
-      address: '서울특별시 서초구 반포동 724',
-      courtCount: 6,
+      address: '서울특별시 강동구 암사동 637',
       surface: '하드',
     },
   },
