@@ -5,6 +5,12 @@ export function toYMD(date: Date): string {
   return `${y}-${m}-${d}`
 }
 
+export function toHHmm(date: Date): string {
+  const h = String(date.getHours()).padStart(2, '0')
+  const m = String(date.getMinutes()).padStart(2, '0')
+  return `${h}:${m}`
+}
+
 export function addDays(date: Date, days: number): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days)
 }
