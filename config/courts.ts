@@ -202,16 +202,17 @@ export const courts: Court[] = [
     },
   },
   {
-    id: 'yeyak-mangwon',
-    name: '망원한강공원 테니스장',
+    // 실제 사이트에서 검증된 값 (2026-07-09, 사용자 확인) — 망원한강공원(가짜 rsv_svc_id) 대체
+    // 좌표는 페이지 내 주석 처리된 legacy 스크립트에서 추출한 근사값 — 실측 필요
+    id: 'yeyak-hongeun',
+    name: '홍은테니스장',
     source: 'yeyak',
-    lat: 37.5546,
-    lng: 126.8976,
-    deepLinkTemplate: `${YEYAK}?rsv_svc_id=S220101000002`,
+    lat: 37.59699,
+    lng: 126.94042,
+    deepLinkTemplate: `${YEYAK}?rsv_svc_id=S260623114555963304`,
     slotUnitMinutes: 60,
     info: {
-      address: '서울특별시 마포구 망원동',
-      courtCount: 4,
+      address: '서울특별시 서대문구 홍은동',
       surface: '하드',
     },
   },
