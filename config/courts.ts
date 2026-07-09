@@ -17,7 +17,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6617,
     lng: 126.7766,
-    deepLinkTemplate: `${GYTENNIS}/rsvDaily/1/{date}`,
+    deepLinkTemplate: `${GYTENNIS}/daily/1/{date}`,
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 일산서구 대화동',
@@ -32,7 +32,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6491,
     lng: 126.8762,
-    deepLinkTemplate: `${GYTENNIS}/rsvDaily/2/{date}`,
+    deepLinkTemplate: `${GYTENNIS}/daily/2/{date}`,
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 덕양구 삼송동',
@@ -46,7 +46,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6850,
     lng: 126.8289,
-    deepLinkTemplate: `${GYTENNIS}/rsvDaily/3/{date}`,
+    deepLinkTemplate: `${GYTENNIS}/daily/3/{date}`,
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 일산동구 성석동',
@@ -60,7 +60,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6420,
     lng: 126.8680,
-    deepLinkTemplate: `${GYTENNIS}/rsvDaily/4/{date}`,
+    deepLinkTemplate: `${GYTENNIS}/daily/4/{date}`,
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 덕양구 성사동',
@@ -74,7 +74,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6418,
     lng: 126.8683,
-    deepLinkTemplate: `${GYTENNIS}/rsvDaily/5/{date}`,
+    deepLinkTemplate: `${GYTENNIS}/daily/5/{date}`,
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 덕양구 성사동',
@@ -88,7 +88,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6720,
     lng: 126.7920,
-    deepLinkTemplate: `${GYTENNIS}/rsvDaily/6/{date}`,
+    deepLinkTemplate: `${GYTENNIS}/daily/6/{date}`,
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 일산서구 중산동',
@@ -102,7 +102,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6220,
     lng: 126.8580,
-    deepLinkTemplate: `${GYTENNIS}/rsvDaily/7/{date}`,
+    deepLinkTemplate: `${GYTENNIS}/daily/7/{date}`,
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 덕양구 충장동',
@@ -116,7 +116,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6655,
     lng: 126.7614,
-    deepLinkTemplate: `${GYTENNIS}/rsvDaily/8/{date}`,
+    deepLinkTemplate: `${GYTENNIS}/daily/8/{date}`,
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 일산서구 대화동 (킨텍스 인근)',
@@ -130,7 +130,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6380,
     lng: 126.8450,
-    deepLinkTemplate: `${GYTENNIS}/rsvDaily/9/{date}`,
+    deepLinkTemplate: `${GYTENNIS}/daily/9/{date}`,
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 덕양구 토당동',
@@ -144,7 +144,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6365,
     lng: 126.8315,
-    deepLinkTemplate: `${GYTENNIS}/rsvDaily/10/{date}`,
+    deepLinkTemplate: `${GYTENNIS}/daily/10/{date}`,
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 덕양구 화정동',
@@ -160,7 +160,7 @@ export const courts: Court[] = [
     source: 'yangpyeong',
     lat: 37.5244,
     lng: 126.8973,
-    deepLinkTemplate: 'https://srent.y-sisul.or.kr/rentalSvc/svc/selectSvcReservationCalenderView.do',
+    deepLinkTemplate: 'https://srent.y-sisul.or.kr/page/rent/s04.od.list.asp',
     slotUnitMinutes: 120,
     info: {
       address: '서울특별시 영등포구 양평동4가 29-5',

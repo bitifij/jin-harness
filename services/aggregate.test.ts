@@ -63,4 +63,18 @@ describe('aggregateCourts', () => {
       expect(court.weather[DATE][0].tier).toBe('clear')
     }
   })
+
+  it('gytennis 코트의 딥링크 경로에서 실제 사이트 경로와 같은 코트 ID를 추출해 fetchGytennisDaily에 전달한다', async () => {
+    // deepLinkTemplate은 실제 사이트 경로(/daily/{id})와 같은 형식이어야 하고,
+    // 데이터 수집도 그 경로에서 ID를 뽑아 같은 코트를 조회해야 한다 (딥링크·수집 경로 불일치 방지)
+    vi.mocked(fetchGytennisDaily).mockResolvedValue({ date: DATE, kind: 'slot', slots: [] })
+    vi.mocked(fetchYangpyeongDaily).mockResolvedValue({ date: DATE, kind: 'slot', slots: [] })
+    vi.mocked(fetchYeyakCalendar).mockResolvedValue({ date: DATE, kind: 'count', remaining: 3, capacity: 10 })
+
+    const result = await aggregateCourts(YEOUIDO_FALLBACK.lat, YEOUIDO_FALLBACK.lng, 50, [DATE])
+
+    const court1 = result.find((c) => c.id === 'gytennis-1')
+    expect(court1?.deepLinkTemplate).toMatch(/\/daily\/1\/\{date\}$/)
+    expect(fetchGytennisDaily).toHaveBeenCalledWith('1', DATE)
+  })
 })

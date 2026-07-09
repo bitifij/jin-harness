@@ -25,7 +25,7 @@ function buildWeatherBlocks(): Array<[number, number]> {
 }
 
 function extractGytennisCourtId(court: Court): string {
-  const match = court.deepLinkTemplate.match(/\/rsvDaily\/(\d+)\//)
+  const match = court.deepLinkTemplate.match(/\/daily\/(\d+)\//)
   return match ? match[1] : court.id
 }
 
