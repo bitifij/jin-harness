@@ -288,6 +288,57 @@ describe('CourtCard (yeyak)', () => {
     const link = screen.getByRole('link', { name: '예약하기' })
     expect(link).toHaveAttribute('href', 'https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S1')
   })
+
+  it('평일·주말 링크가 각각 등록된 코트는 요일유형별 예약 버튼이 따로 표시된다', () => {
+    const multiLinkCourt: Court = {
+      ...yeyakCourt,
+      id: 'yeyak-jamwon',
+      bookingLinks: [
+        { dayType: 'weekday', urlTemplate: 'https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=WD1' },
+        { dayType: 'weekend', urlTemplate: 'https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=WE1' },
+      ],
+    }
+    const availability: Record<string, DayAvailability> = {
+      '2026-07-22': { date: '2026-07-22', kind: 'count', remaining: 3, capacity: 10 },
+    }
+    renderCard(
+      <CourtCard
+        court={multiLinkCourt}
+        distanceKm={6.1}
+        dates={['2026-07-22']}
+        availability={availability}
+        weather={{}}
+        now={new Date('2026-07-01T09:00:00')}
+      />,
+    )
+
+    const weekday = screen.getByRole('link', { name: '평일 예약' })
+    const weekend = screen.getByRole('link', { name: '주말·공휴일 예약' })
+    expect(weekday).toHaveAttribute('href', 'https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=WD1')
+    expect(weekend).toHaveAttribute('href', 'https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=WE1')
+    expect(weekday).toHaveAttribute('target', '_blank')
+    expect(weekend).toHaveAttribute('target', '_blank')
+    expect(screen.queryByRole('link', { name: '예약하기' })).not.toBeInTheDocument()
+  })
+
+  it('링크가 1개뿐인 코트는 기존과 같은 단일 예약 버튼을 보인다', () => {
+    const availability: Record<string, DayAvailability> = {
+      '2026-07-22': { date: '2026-07-22', kind: 'count', remaining: 3, capacity: 10 },
+    }
+    renderCard(
+      <CourtCard
+        court={yeyakCourt}
+        distanceKm={6.1}
+        dates={['2026-07-22']}
+        availability={availability}
+        weather={{}}
+        now={new Date('2026-07-01T09:00:00')}
+      />,
+    )
+
+    expect(screen.getAllByRole('link')).toHaveLength(1)
+    expect(screen.getByRole('link', { name: '예약하기' })).toBeInTheDocument()
+  })
 })
 
 describe('CourtCard (로드실패)', () => {

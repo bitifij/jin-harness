@@ -6,7 +6,13 @@ import { CourtInfoDetails } from '@/components/tennis/court-info'
 import { toYMD, toHHmm } from '@/lib/date'
 import { resolveBookingUrl } from '@/lib/booking'
 import { getWeatherEmoji } from '@/lib/weather/emoji'
-import type { Court, DayAvailability, Slot, WeatherHint } from '@/types/tennis'
+import type { Court, DayAvailability, DayType, Slot, WeatherHint } from '@/types/tennis'
+
+const DAY_TYPE_LABEL: Record<DayType, string> = {
+  all: '예약하기',
+  weekday: '평일 예약',
+  weekend: '주말·공휴일 예약',
+}
 
 interface CourtCardProps {
   court: Court
@@ -81,11 +87,23 @@ export function CourtCard({ court, distanceKm, dates, availability, weather, now
           <CourtInfoDetails info={court.info} />
         </CardContent>
         <CardFooter>
-          <Button asChild className="w-full">
-            <a href={court.bookingLinks[0].urlTemplate} target="_blank" rel="noreferrer">
-              {allZeroOrError ? '사이트에서 확인하기' : '예약하기'}
-            </a>
-          </Button>
+          {court.bookingLinks.length > 1 ? (
+            <div className="flex w-full gap-2">
+              {court.bookingLinks.map((link) => (
+                <Button asChild key={link.dayType} className="flex-1">
+                  <a href={link.urlTemplate} target="_blank" rel="noreferrer">
+                    {DAY_TYPE_LABEL[link.dayType]}
+                  </a>
+                </Button>
+              ))}
+            </div>
+          ) : (
+            <Button asChild className="w-full">
+              <a href={court.bookingLinks[0].urlTemplate} target="_blank" rel="noreferrer">
+                {allZeroOrError ? '사이트에서 확인하기' : '예약하기'}
+              </a>
+            </Button>
+          )}
         </CardFooter>
       </Card>
     )
