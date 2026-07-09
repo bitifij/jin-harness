@@ -1,0 +1,41 @@
+{
+  "resultStats": { "resultCode": "success", "resultMsg": "" },
+  "resultMap": { "VIEW_BEFORE_YN": "N", "VIEW_NEXT_YN": "Y" },
+  "resultListDays": [
+    { "YMD": "20260709", "SVC_RESVE_CODE": "Y" },
+    { "YMD": "20260710", "SVC_RESVE_CODE": "N" },
+    { "YMD": "20260711", "SVC_RESVE_CODE": "Y" },
+    { "YMD": "20260712", "SVC_RESVE_CODE": "C" },
+    { "YMD": "20260713", "SVC_RESVE_CODE": "Y" }
+  ],
+  "resultListTm": {
+    "20260709": {
+      "USE_DE": "20260709",
+      "RCEPT_POSBL_YN": "1",
+      "RESVE_POSBL_CNT": 3,
+      "REG_TOTAL_CNT": 7,
+      "RCRIT_NMPR_CNT": 10
+    },
+    "20260711": {
+      "USE_DE": "20260711",
+      "RCEPT_POSBL_YN": "1",
+      "RESVE_POSBL_CNT": 5,
+      "REG_TOTAL_CNT": 5,
+      "RCRIT_NMPR_CNT": 10
+    },
+    "20260712": {
+      "USE_DE": "20260712",
+      "RCEPT_POSBL_YN": "1",
+      "RESVE_POSBL_CNT": 0,
+      "REG_TOTAL_CNT": 10,
+      "RCRIT_NMPR_CNT": 10
+    },
+    "20260713": {
+      "USE_DE": "20260713",
+      "RCEPT_POSBL_YN": "0",
+      "RESVE_POSBL_CNT": 2,
+      "REG_TOTAL_CNT": 8,
+      "RCRIT_NMPR_CNT": 10
+    }
+  }
+}
