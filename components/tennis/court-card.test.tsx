@@ -25,6 +25,17 @@ const weatherHints: WeatherHint[] = [
   { hourFrom: 18, hourTo: 20, tier: 'rain', pop: 60, precip: 2 },
 ]
 
+const yeyakCourt: Court = {
+  id: 'yeyak-ddukseom',
+  name: '뚝섬한강공원 테니스장',
+  source: 'yeyak',
+  lat: 37.53,
+  lng: 127.07,
+  deepLinkTemplate: 'https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S1',
+  slotUnitMinutes: 60,
+  info: { address: '서울 광진구', courtCount: 8, surface: '하드' },
+}
+
 describe('CourtCard (슬롯 소스)', () => {
   it('예약가능 시간칩과 날씨 이모지, 슬롯 수 배지를 표시한다', () => {
     const availability: Record<string, DayAvailability> = {
@@ -212,5 +223,93 @@ describe('CourtCard (슬롯 소스)', () => {
     await userEvent.hover(screen.getByText(/18-20/))
     const tooltip = await screen.findByRole('tooltip')
     expect(tooltip.textContent).toBe('강수 60% · 2mm')
+  })
+})
+
+describe('CourtCard (yeyak)', () => {
+  it('"N면 남음"과 날짜별 날씨 이모지를 표시하고, 시간칩 없이 안내 문구를 보인다', () => {
+    const availability: Record<string, DayAvailability> = {
+      '2026-07-22': { date: '2026-07-22', kind: 'count', remaining: 3, capacity: 10 },
+    }
+    renderCard(
+      <CourtCard
+        court={yeyakCourt}
+        distanceKm={6.1}
+        dates={['2026-07-22']}
+        availability={availability}
+        weather={{ '2026-07-22': [{ hourFrom: 6, hourTo: 8, tier: 'clear', pop: 0, precip: 0 }] }}
+        now={new Date('2026-07-01T09:00:00')}
+      />,
+    )
+
+    expect(screen.getByText('3면 남음')).toBeInTheDocument()
+    expect(screen.getByText('☀️')).toBeInTheDocument()
+    expect(screen.getByText('예약 시간대는 사이트에서 (yeyak은 날짜 단위)')).toBeInTheDocument()
+    expect(screen.queryByText(/-\d{2}/)).not.toBeInTheDocument()
+  })
+
+  it('remaining=0이면 마감(0면) 표시와 활성 "사이트에서 확인하기" 링크를 보인다', () => {
+    const availability: Record<string, DayAvailability> = {
+      '2026-07-22': { date: '2026-07-22', kind: 'count', remaining: 0, capacity: 10 },
+    }
+    renderCard(
+      <CourtCard
+        court={yeyakCourt}
+        distanceKm={6.1}
+        dates={['2026-07-22']}
+        availability={availability}
+        weather={{}}
+        now={new Date('2026-07-01T09:00:00')}
+      />,
+    )
+
+    expect(screen.getByText('마감(0면)')).toBeInTheDocument()
+    const link = screen.getByRole('link', { name: '사이트에서 확인하기' })
+    expect(link).not.toHaveAttribute('disabled')
+    expect(link).toHaveAttribute('href', yeyakCourt.deepLinkTemplate)
+    expect(link).toHaveAttribute('target', '_blank')
+  })
+
+  it('"예약하기" 클릭 시 selectReservView.do?rsv_svc_id={id}로 연결된다', () => {
+    const availability: Record<string, DayAvailability> = {
+      '2026-07-22': { date: '2026-07-22', kind: 'count', remaining: 3, capacity: 10 },
+    }
+    renderCard(
+      <CourtCard
+        court={yeyakCourt}
+        distanceKm={6.1}
+        dates={['2026-07-22']}
+        availability={availability}
+        weather={{}}
+        now={new Date('2026-07-01T09:00:00')}
+      />,
+    )
+
+    const link = screen.getByRole('link', { name: '예약하기' })
+    expect(link).toHaveAttribute('href', 'https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S1')
+  })
+})
+
+describe('CourtCard (로드실패)', () => {
+  it('loadError 코트는 "현황 확인 불가" + 활성 외부링크를 보이고 현황 배지는 없으며 날씨는 유지된다', () => {
+    const availability: Record<string, DayAvailability> = {
+      '2026-07-22': { date: '2026-07-22', kind: 'unavailable', loadError: true },
+    }
+    renderCard(
+      <CourtCard
+        court={court}
+        distanceKm={3.0}
+        dates={['2026-07-22']}
+        availability={availability}
+        weather={{ '2026-07-22': [{ hourFrom: 6, hourTo: 8, tier: 'clear', pop: 0, precip: 0 }] }}
+        now={new Date('2026-07-01T09:00:00')}
+      />,
+    )
+
+    expect(screen.getByText('현황 확인 불가')).toBeInTheDocument()
+    expect(screen.queryByText(/슬롯/)).not.toBeInTheDocument()
+    expect(screen.getByText('☀️')).toBeInTheDocument()
+    const link = screen.getByRole('link', { name: '사이트에서 직접 확인하기' })
+    expect(link).toHaveAttribute('target', '_blank')
   })
 })
