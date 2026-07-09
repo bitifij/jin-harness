@@ -191,9 +191,9 @@
   - `app/api/courts/route.ts` (query: lat,lng,radius,dates → 거리계산·반경필터·거리순 정렬된 코트 배열)
   - `app/api/courts/route.test.ts` (소스/날씨 서비스 mock)
 - **수용 기준**:
-  - [ ] lat/lng/radius/dates 요청 시 반경 내 코트만, 거리순으로 반환한다
-  - [ ] 한 소스가 실패해도 다른 코트는 정상 반환되고 실패 코트는 loadError로 표시된다
-  - [ ] 각 코트에 날짜별 현황과 날씨 tier가 포함된다
+  - [x] lat/lng/radius/dates 요청 시 반경 내 코트만, 거리순으로 반환한다
+  - [x] 한 소스가 실패해도 다른 코트는 정상 반환되고 실패 코트는 loadError로 표시된다
+  - [x] 각 코트에 날짜별 현황과 날씨 tier가 포함된다 — 운영시간(06~22시) 2h 블록별 WeatherHint 배열 (gytennis·양평누리 슬롯 단위와 정렬)
 - **검증**: `bun run test -- app/api/courts`
 
 ---
