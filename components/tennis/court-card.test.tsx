@@ -15,7 +15,7 @@ const court: Court = {
   source: 'gytennis',
   lat: 37.66,
   lng: 126.77,
-  deepLinkTemplate: 'https://gytennis.or.kr/rsvDaily/1/{date}',
+  bookingLinks: [{ dayType: 'all' as const, urlTemplate: 'https://gytennis.or.kr/daily/1/{date}' }],
   slotUnitMinutes: 120,
   info: { address: '경기 고양시', courtCount: 4, surface: '하드', hours: '06:00~22:00' },
 }
@@ -31,7 +31,7 @@ const yeyakCourt: Court = {
   source: 'yeyak',
   lat: 37.53,
   lng: 127.07,
-  deepLinkTemplate: 'https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S1',
+  bookingLinks: [{ dayType: 'all' as const, urlTemplate: 'https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S1' }],
   slotUnitMinutes: 60,
   info: { address: '서울 광진구', courtCount: 8, surface: '하드' },
 }
@@ -179,7 +179,7 @@ describe('CourtCard (슬롯 소스)', () => {
 
     const link = screen.getByRole('link', { name: '예약하기' })
     expect(link).toHaveAttribute('target', '_blank')
-    expect(link).toHaveAttribute('href', 'https://gytennis.or.kr/rsvDaily/1/2026-07-22')
+    expect(link).toHaveAttribute('href', 'https://gytennis.or.kr/daily/1/2026-07-22')
   })
 
   it('코트 정보는 기본 닫힘이고 제공된 항목만 표시된다', () => {
@@ -266,7 +266,7 @@ describe('CourtCard (yeyak)', () => {
     expect(screen.getByText('마감(0면)')).toBeInTheDocument()
     const link = screen.getByRole('link', { name: '사이트에서 확인하기' })
     expect(link).not.toHaveAttribute('disabled')
-    expect(link).toHaveAttribute('href', yeyakCourt.deepLinkTemplate)
+    expect(link).toHaveAttribute('href', yeyakCourt.bookingLinks[0].urlTemplate)
     expect(link).toHaveAttribute('target', '_blank')
   })
 

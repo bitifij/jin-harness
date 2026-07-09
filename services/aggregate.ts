@@ -4,6 +4,7 @@ import { fetchYangpyeongDaily } from '@/services/sources/yangpyeong'
 import { fetchYeyakCalendar } from '@/services/sources/yeyak'
 import { kmaWeatherProvider } from '@/services/weather'
 import { haversineKm } from '@/lib/geo'
+import { pickBookingLink } from '@/lib/booking'
 import type { Court, DayAvailability, WeatherHint } from '@/types/tennis'
 
 export interface CourtWithAvailability extends Court {
@@ -25,12 +26,15 @@ function buildWeatherBlocks(): Array<[number, number]> {
 }
 
 function extractGytennisCourtId(court: Court): string {
-  const match = court.deepLinkTemplate.match(/\/daily\/(\d+)\//)
+  const match = court.bookingLinks[0].urlTemplate.match(/\/daily\/(\d+)\//)
   return match ? match[1] : court.id
 }
 
-function extractYeyakSvcId(court: Court): string {
-  return new URL(court.deepLinkTemplate).searchParams.get('rsv_svc_id') ?? court.id
+// 요일유형별 회차가 별도 ID로 발급되므로, 날짜에 맞는 링크의 ID로 잔여를 조회해야
+// 카드 표시와 사용자가 예약할 회차가 일치한다
+function extractYeyakSvcId(court: Court, date: string): string {
+  const link = pickBookingLink(court.bookingLinks, date)
+  return new URL(link.urlTemplate).searchParams.get('rsv_svc_id') ?? court.id
 }
 
 function fetchAvailability(court: Court, date: string): Promise<DayAvailability> {
@@ -40,7 +44,7 @@ function fetchAvailability(court: Court, date: string): Promise<DayAvailability>
     case 'yangpyeong':
       return fetchYangpyeongDaily(date)
     case 'yeyak':
-      return fetchYeyakCalendar(extractYeyakSvcId(court), date)
+      return fetchYeyakCalendar(extractYeyakSvcId(court, date), date)
   }
 }
 

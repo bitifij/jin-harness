@@ -46,7 +46,7 @@ function slotCourt(slots: { start: string; end: string; available: boolean }[]):
     source: 'gytennis',
     lat: 0,
     lng: 0,
-    deepLinkTemplate: '',
+    bookingLinks: [{ dayType: 'all' as const, urlTemplate: '' }],
     slotUnitMinutes: 120,
     info: {},
     distanceKm: 1,

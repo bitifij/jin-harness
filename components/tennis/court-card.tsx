@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { TimeChip } from '@/components/tennis/time-chip'
 import { CourtInfoDetails } from '@/components/tennis/court-info'
 import { toYMD, toHHmm } from '@/lib/date'
+import { resolveBookingUrl } from '@/lib/booking'
 import { getWeatherEmoji } from '@/lib/weather/emoji'
 import type { Court, DayAvailability, Slot, WeatherHint } from '@/types/tennis'
 
@@ -81,7 +82,7 @@ export function CourtCard({ court, distanceKm, dates, availability, weather, now
         </CardContent>
         <CardFooter>
           <Button asChild className="w-full">
-            <a href={court.deepLinkTemplate} target="_blank" rel="noreferrer">
+            <a href={court.bookingLinks[0].urlTemplate} target="_blank" rel="noreferrer">
               {allZeroOrError ? '사이트에서 확인하기' : '예약하기'}
             </a>
           </Button>
@@ -99,7 +100,7 @@ export function CourtCard({ court, distanceKm, dates, availability, weather, now
   const hasLoadError = dateRows.some((row) => row.loadError)
   const allClosed = dateRows.every((row) => row.slots.length === 0)
   const bookingDate = dateRows.find((row) => row.slots.length > 0)?.date ?? dates[0]
-  const href = court.deepLinkTemplate.replace('{date}', bookingDate)
+  const href = resolveBookingUrl(court.bookingLinks[0], bookingDate)
 
   return (
     <Card data-testid={`court-card-${court.id}`}>

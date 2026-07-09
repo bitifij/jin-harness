@@ -8,7 +8,29 @@ describe('courts config', () => {
       expect(court.source, `${court.name}: source 누락`).toBeTruthy()
       expect(court.lat, `${court.name}: lat 누락`).toBeTruthy()
       expect(court.lng, `${court.name}: lng 누락`).toBeTruthy()
-      expect(court.deepLinkTemplate, `${court.name}: deepLinkTemplate 누락`).toBeTruthy()
+      expect(court.bookingLinks.length, `${court.name}: bookingLinks 비어 있음`).toBeGreaterThanOrEqual(1)
+      for (const link of court.bookingLinks) {
+        expect(link.urlTemplate, `${court.name}: urlTemplate 누락`).toBeTruthy()
+      }
+    }
+  })
+
+  it('yeyak 코트는 평일·주말 예약 링크를 각각 가진다', () => {
+    const yeyak = courts.filter((c) => c.source === 'yeyak')
+    for (const court of yeyak) {
+      const dayTypes = court.bookingLinks.map((l) => l.dayType)
+      expect(dayTypes, `${court.name}: weekday 링크 누락`).toContain('weekday')
+      expect(dayTypes, `${court.name}: weekend 링크 누락`).toContain('weekend')
+    }
+  })
+
+  it('yeyak 코트는 소프트 404 판정용 expectedText와 대체 ID 검색용 searchKeyword를 가진다', () => {
+    const yeyak = courts.filter((c) => c.source === 'yeyak')
+    for (const court of yeyak) {
+      expect(court.searchKeyword, `${court.name}: searchKeyword 누락`).toBeTruthy()
+      for (const link of court.bookingLinks) {
+        expect(link.expectedText, `${court.name}/${link.dayType}: expectedText 누락`).toBeTruthy()
+      }
     }
   })
 

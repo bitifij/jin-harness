@@ -16,7 +16,7 @@ const sampleCourt: CourtWithAvailability = {
   source: 'gytennis',
   lat: 37.66,
   lng: 126.77,
-  deepLinkTemplate: 'https://gytennis.or.kr/rsvDaily/1/{date}',
+  bookingLinks: [{ dayType: 'all' as const, urlTemplate: 'https://gytennis.or.kr/daily/1/{date}' }],
   slotUnitMinutes: 120,
   info: {},
   distanceKm: 3.2,

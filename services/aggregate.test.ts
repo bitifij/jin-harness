@@ -65,7 +65,7 @@ describe('aggregateCourts', () => {
   })
 
   it('gytennis 코트의 딥링크 경로에서 실제 사이트 경로와 같은 코트 ID를 추출해 fetchGytennisDaily에 전달한다', async () => {
-    // deepLinkTemplate은 실제 사이트 경로(/daily/{id})와 같은 형식이어야 하고,
+    // 예약 링크는 실제 사이트 경로(/daily/{id})와 같은 형식이어야 하고,
     // 데이터 수집도 그 경로에서 ID를 뽑아 같은 코트를 조회해야 한다 (딥링크·수집 경로 불일치 방지)
     vi.mocked(fetchGytennisDaily).mockResolvedValue({ date: DATE, kind: 'slot', slots: [] })
     vi.mocked(fetchYangpyeongDaily).mockResolvedValue({ date: DATE, kind: 'slot', slots: [] })
@@ -74,7 +74,27 @@ describe('aggregateCourts', () => {
     const result = await aggregateCourts(YEOUIDO_FALLBACK.lat, YEOUIDO_FALLBACK.lng, 50, [DATE])
 
     const court1 = result.find((c) => c.id === 'gytennis-1')
-    expect(court1?.deepLinkTemplate).toMatch(/\/daily\/1\/\{date\}$/)
+    expect(court1?.bookingLinks[0].urlTemplate).toMatch(/\/daily\/1\/\{date\}$/)
     expect(fetchGytennisDaily).toHaveBeenCalledWith('1', DATE)
+  })
+
+  it('yeyak 잔여 조회는 날짜의 요일유형에 맞는 예약 ID로 요청한다', async () => {
+    // 평일/주말 회차가 서로 다른 rsv_svc_id로 발급되므로, 조회 날짜의 요일에 맞는 ID를 골라야
+    // 카드에 표시되는 잔여 면수가 사용자가 예약할 회차와 일치한다
+    vi.mocked(fetchGytennisDaily).mockResolvedValue({ date: DATE, kind: 'slot', slots: [] })
+    vi.mocked(fetchYangpyeongDaily).mockResolvedValue({ date: DATE, kind: 'slot', slots: [] })
+    vi.mocked(fetchYeyakCalendar).mockResolvedValue({ date: DATE, kind: 'count', remaining: 3, capacity: 10 })
+
+    const wednesday = '2026-07-08'
+    const saturday = '2026-07-11'
+    const result = await aggregateCourts(YEOUIDO_FALLBACK.lat, YEOUIDO_FALLBACK.lng, 50, [wednesday, saturday])
+
+    const jamwon = result.find((c) => c.id === 'yeyak-jamwon')
+    expect(jamwon).toBeDefined()
+    const weekdayId = new URL(jamwon!.bookingLinks.find((l) => l.dayType === 'weekday')!.urlTemplate).searchParams.get('rsv_svc_id')
+    const weekendId = new URL(jamwon!.bookingLinks.find((l) => l.dayType === 'weekend')!.urlTemplate).searchParams.get('rsv_svc_id')
+    expect(weekdayId).not.toBe(weekendId)
+    expect(fetchYeyakCalendar).toHaveBeenCalledWith(weekdayId, wednesday)
+    expect(fetchYeyakCalendar).toHaveBeenCalledWith(weekendId, saturday)
   })
 })
