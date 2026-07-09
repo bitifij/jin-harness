@@ -1,5 +1,5 @@
-import { ComponentExample } from "@/components/component-example";
+import { TennisRadar } from "@/components/tennis/tennis-radar";
 
 export default function Page() {
-return <ComponentExample />;
+  return <TennisRadar />;
 }
