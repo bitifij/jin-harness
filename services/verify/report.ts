@@ -33,6 +33,9 @@ export function summarize(results: VerifyResult[]): Summary {
 
 const VERDICT_EMOJI = { ok: '✅', broken: '❌', changed: '🔄' } as const
 
+// 테이블 셀에 들어가는 자유 텍스트의 파이프가 md 테이블을 깨뜨리지 않도록 방어
+const cell = (text: string) => text.replaceAll('|', '\\|')
+
 export function renderReport({ ranAt, results, skipped, actions = [] }: ReportInput): string {
   const s = summarize(results)
   const lines: string[] = []
@@ -52,7 +55,7 @@ export function renderReport({ ranAt, results, skipped, actions = [] }: ReportIn
   lines.push('| 판정 | 항목 | 상세 |')
   lines.push('|---|---|---|')
   for (const r of results) {
-    lines.push(`| ${VERDICT_EMOJI[r.verdict]} ${r.verdict} | ${r.target.label} | ${r.reason} |`)
+    lines.push(`| ${VERDICT_EMOJI[r.verdict]} ${r.verdict} | ${cell(r.target.label)} | ${cell(r.reason)} |`)
   }
   lines.push('')
 
@@ -86,7 +89,7 @@ export function renderReport({ ranAt, results, skipped, actions = [] }: ReportIn
     lines.push('| 시각 | 코트 | 액션 | 내용 |')
     lines.push('|---|---|---|---|')
     for (const a of actions) {
-      lines.push(`| ${a.timestamp} | ${a.courtId} | ${a.action} | ${a.detail} |`)
+      lines.push(`| ${a.timestamp} | ${a.courtId} | ${a.action} | ${cell(a.detail)} |`)
     }
   }
   lines.push('')

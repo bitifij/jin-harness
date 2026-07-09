@@ -59,8 +59,9 @@ export async function aggregateCourts(
   lng: number,
   radiusKm: number,
   dates: string[],
+  courtList: Court[] = courts,
 ): Promise<CourtWithAvailability[]> {
-  const withinRadius = courts
+  const withinRadius = courtList
     .filter((court) => !court.hidden)
     .map((court) => ({ court, distanceKm: haversineKm(lat, lng, court.lat, court.lng) }))
     .filter(({ distanceKm }) => distanceKm <= radiusKm)

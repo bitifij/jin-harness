@@ -24,6 +24,13 @@ describe('courts config', () => {
     }
   })
 
+  it('코트 내 dayType은 중복되지 않는다 (카드 버튼 key·링크 선택의 전제)', () => {
+    for (const court of courts) {
+      const dayTypes = court.bookingLinks.map((l) => l.dayType)
+      expect(new Set(dayTypes).size, `${court.name}: dayType 중복`).toBe(dayTypes.length)
+    }
+  })
+
   it('yeyak 코트는 소프트 404 판정용 expectedText와 대체 ID 검색용 searchKeyword를 가진다', () => {
     const yeyak = courts.filter((c) => c.source === 'yeyak')
     for (const court of yeyak) {

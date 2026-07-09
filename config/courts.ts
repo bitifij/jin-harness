@@ -10,6 +10,12 @@ function yeyakLink(dayType: 'weekday' | 'weekend', rsvSvcId: string, expectedTex
   return { dayType, urlTemplate: `${YEYAK}?rsv_svc_id=${rsvSvcId}`, expectedText }
 }
 
+// gytennis daily 페이지는 심야(22~05시)에 "예약 가능한 시간이 아닙니다" 안내 shell(200)을 반환한다 —
+// 그 shell에도 '예약'은 포함되므로 시간대와 무관하게 유효한 최소 판별 문자열로 쓴다.
+function gytennisLink(courtId: number) {
+  return { dayType: 'all' as const, urlTemplate: `${GYTENNIS}/daily/${courtId}/{date}`, expectedText: '예약' }
+}
+
 // NOTE: gytennis court IDs and coordinates are seed values — verify against actual site.
 export const courts: Court[] = [
   // ──── gytennis (고양특례시테니스협회) ────
@@ -21,7 +27,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6617,
     lng: 126.7766,
-    bookingLinks: [{ dayType: 'all', urlTemplate: `${GYTENNIS}/daily/1/{date}` }],
+    bookingLinks: [gytennisLink(1)],
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 일산서구 대화동',
@@ -36,7 +42,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6491,
     lng: 126.8762,
-    bookingLinks: [{ dayType: 'all', urlTemplate: `${GYTENNIS}/daily/2/{date}` }],
+    bookingLinks: [gytennisLink(2)],
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 덕양구 삼송동',
@@ -50,7 +56,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6850,
     lng: 126.8289,
-    bookingLinks: [{ dayType: 'all', urlTemplate: `${GYTENNIS}/daily/3/{date}` }],
+    bookingLinks: [gytennisLink(3)],
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 일산동구 성석동',
@@ -64,7 +70,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6420,
     lng: 126.8680,
-    bookingLinks: [{ dayType: 'all', urlTemplate: `${GYTENNIS}/daily/4/{date}` }],
+    bookingLinks: [gytennisLink(4)],
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 덕양구 성사동',
@@ -78,7 +84,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6418,
     lng: 126.8683,
-    bookingLinks: [{ dayType: 'all', urlTemplate: `${GYTENNIS}/daily/5/{date}` }],
+    bookingLinks: [gytennisLink(5)],
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 덕양구 성사동',
@@ -92,7 +98,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6720,
     lng: 126.7920,
-    bookingLinks: [{ dayType: 'all', urlTemplate: `${GYTENNIS}/daily/6/{date}` }],
+    bookingLinks: [gytennisLink(6)],
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 일산서구 중산동',
@@ -106,7 +112,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6220,
     lng: 126.8580,
-    bookingLinks: [{ dayType: 'all', urlTemplate: `${GYTENNIS}/daily/7/{date}` }],
+    bookingLinks: [gytennisLink(7)],
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 덕양구 충장동',
@@ -120,7 +126,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6655,
     lng: 126.7614,
-    bookingLinks: [{ dayType: 'all', urlTemplate: `${GYTENNIS}/daily/8/{date}` }],
+    bookingLinks: [gytennisLink(8)],
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 일산서구 대화동 (킨텍스 인근)',
@@ -134,7 +140,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6380,
     lng: 126.8450,
-    bookingLinks: [{ dayType: 'all', urlTemplate: `${GYTENNIS}/daily/9/{date}` }],
+    bookingLinks: [gytennisLink(9)],
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 덕양구 토당동',
@@ -148,7 +154,7 @@ export const courts: Court[] = [
     source: 'gytennis',
     lat: 37.6365,
     lng: 126.8315,
-    bookingLinks: [{ dayType: 'all', urlTemplate: `${GYTENNIS}/daily/10/{date}` }],
+    bookingLinks: [gytennisLink(10)],
     slotUnitMinutes: 120,
     info: {
       address: '경기도 고양시 덕양구 화정동',
@@ -164,7 +170,7 @@ export const courts: Court[] = [
     source: 'yangpyeong',
     lat: 37.5244,
     lng: 126.8973,
-    bookingLinks: [{ dayType: 'all', urlTemplate: 'https://srent.y-sisul.or.kr/page/rent/s04.od.list.asp' }],
+    bookingLinks: [{ dayType: 'all', urlTemplate: 'https://srent.y-sisul.or.kr/page/rent/s04.od.list.asp', expectedText: '테니스장 대관신청' }],
     slotUnitMinutes: 120,
     info: {
       address: '서울특별시 영등포구 양평동4가 29-5',

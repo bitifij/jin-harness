@@ -103,17 +103,13 @@ describe('aggregateCourts', () => {
     vi.mocked(fetchYangpyeongDaily).mockResolvedValue({ date: DATE, kind: 'slot', slots: [] })
     vi.mocked(fetchYeyakCalendar).mockResolvedValue({ date: DATE, kind: 'count', remaining: 3, capacity: 10 })
 
+    // 싱글턴 config를 mutate하지 않도록 복제본을 주입한다
     const { courts } = await import('@/config/courts')
-    const target = courts.find((c) => c.id === 'yangpyeong-1')!
-    target.hidden = true
-    target.hiddenReason = '테스트용 숨김'
-    try {
-      const result = await aggregateCourts(YEOUIDO_FALLBACK.lat, YEOUIDO_FALLBACK.lng, 50, [DATE])
-      expect(result.find((c) => c.id === 'yangpyeong-1')).toBeUndefined()
-      expect(result.length).toBeGreaterThan(0)
-    } finally {
-      delete target.hidden
-      delete target.hiddenReason
-    }
+    const cloned = courts.map((c) =>
+      c.id === 'yangpyeong-1' ? { ...c, hidden: true, hiddenReason: '테스트용 숨김' } : c,
+    )
+    const result = await aggregateCourts(YEOUIDO_FALLBACK.lat, YEOUIDO_FALLBACK.lng, 50, [DATE], cloned)
+    expect(result.find((c) => c.id === 'yangpyeong-1')).toBeUndefined()
+    expect(result.length).toBeGreaterThan(0)
   })
 })

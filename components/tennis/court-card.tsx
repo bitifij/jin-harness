@@ -87,6 +87,8 @@ export function CourtCard({ court, distanceKm, dates, availability, weather, now
           <CourtInfoDetails info={court.info} />
         </CardContent>
         <CardFooter>
+          {/* 다중 링크(yeyak)는 {date} 플레이스홀더가 없는 코트 단위 URL을 가정한다 —
+              날짜별 링크가 필요한 다중 링크 코트가 생기면 resolveBookingUrl로 치환해야 한다 */}
           {court.bookingLinks.length > 1 ? (
             <div className="flex w-full gap-2">
               {court.bookingLinks.map((link) => (
