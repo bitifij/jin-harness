@@ -97,10 +97,10 @@
   - `components/tennis/court-card.tsx` — 컴파일 유지 최소 수정 (기존 단일 버튼 동작 보존, UI 확장은 Task 2)
   - `config/courts.test.ts`, `services/aggregate.test.ts` — 갱신
 - **수용 기준**:
-  - [ ] 모든 코트가 1개 이상의 bookingLinks를 가지며, 잠원·광나루는 weekday·weekend 링크가 각각 존재한다 (실조회로 확보한 ID)
-  - [ ] 토요일 날짜의 yeyak 잔여 조회는 weekend ID로, 수요일 날짜는 weekday ID로 요청된다 (aggregate 테스트로 관찰)
-  - [ ] gytennis 날짜별 링크(`{date}` 치환)와 카드 예약 버튼 동작이 전환 전과 동일하다 (기존 테스트 전부 통과)
-  - [ ] 검색 ajax에서 평일 회차가 확인되지 않는 코트는 weekend 링크만 갖고, 그 사실이 courts.ts 주석에 기록된다
+  - [x] 모든 코트가 1개 이상의 bookingLinks를 가지며, 잠원·광나루는 weekday·weekend 링크가 각각 존재한다 (실조회로 확보한 ID)
+  - [x] 토요일 날짜의 yeyak 잔여 조회는 weekend ID로, 수요일 날짜는 weekday ID로 요청된다 (aggregate 테스트로 관찰)
+  - [x] gytennis 날짜별 링크(`{date}` 치환)와 카드 예약 버튼 동작이 전환 전과 동일하다 (기존 테스트 전부 통과)
+  - [x] 검색 ajax에서 평일 회차가 확인되지 않는 코트는 weekend 링크만 갖고, 그 사실이 courts.ts 주석에 기록된다
 - **검증**: `bun run test` (전체 회귀), 실조회 증거 `artifacts/court-link-verify/evidence/task-1-yeyak-search.txt` (curl 응답 저장)
 
 ---
@@ -117,9 +117,9 @@
   - `components/tennis/court-card.tsx` — bookingLinks가 2개 이상이면 dayType별 버튼("평일 예약", "주말·공휴일 예약") 병렬 표시, 1개면 기존 단일 버튼
   - `components/tennis/court-card.test.tsx`
 - **수용 기준**:
-  - [ ] weekday·weekend 링크 2개인 코트 카드 → "평일 예약"과 "주말·공휴일 예약" 버튼이 각각 표시된다
-  - [ ] 각 버튼의 href가 해당 dayType의 예약 페이지 URL이다
-  - [ ] 링크 1개(dayType 'all')인 코트 → 기존과 동일한 단일 예약 버튼이 표시된다
+  - [x] weekday·weekend 링크 2개인 코트 카드 → "평일 예약"과 "주말·공휴일 예약" 버튼이 각각 표시된다
+  - [x] 각 버튼의 href가 해당 dayType의 예약 페이지 URL이다
+  - [x] 링크 1개(dayType 'all')인 코트 → 기존과 동일한 단일 예약 버튼이 표시된다
 - **검증**: `bun run test -- court-card`, `bun run build`, Browser MCP — 모바일 폭(375px)에서 버튼 2개 배치가 넘치지 않는지 목측, 증거 `artifacts/court-link-verify/evidence/task-2-mobile.png`
 
 ---
@@ -135,16 +135,16 @@
   - `services/aggregate.ts` — hidden 코트 필터
   - `services/aggregate.test.ts`
 - **수용 기준**:
-  - [ ] hidden: true 코트는 반경 내에 있어도 API 응답(코트 목록)에 나타나지 않는다
-  - [ ] hidden 코트의 데이터는 config에 그대로 남아 있다 (타입이 삭제가 아닌 플래그를 강제)
+  - [x] hidden: true 코트는 반경 내에 있어도 API 응답(코트 목록)에 나타나지 않는다
+  - [x] hidden 코트의 데이터는 config에 그대로 남아 있다 (타입이 삭제가 아닌 플래그를 강제)
 - **검증**: `bun run test -- aggregate`
 
 ---
 
 ### Checkpoint: Tasks 1-3 이후
-- [ ] 모든 테스트 통과: `bun run test`
-- [ ] 빌드 성공: `bun run build`
-- [ ] 앱 실행(`bun dev`) 후 잠원·광나루 카드에 예약 버튼 2개가 보이고 각각 실제 yeyak 페이지로 연결됨 — Browser MCP로 확인, 증거 `artifacts/court-link-verify/evidence/checkpoint-1.png`
+- [x] 모든 테스트 통과: `bun run test`
+- [x] 빌드 성공: `bun run build`
+- [x] 앱 실행(`bun dev`) 후 잠원·광나루 카드에 예약 버튼 2개가 보이고 각각 실제 yeyak 페이지로 연결됨 — Browser MCP로 확인, 증거 `artifacts/court-link-verify/evidence/checkpoint-1.png`
 
 ---
 
@@ -161,10 +161,10 @@
   - `services/verify/judge.ts` + `judge.test.ts` — (HTTP 결과, 점검 항목) → VerifyResult
   - `services/verify/__fixtures__/` — 지난 장애 사례 재현: 404 응답, 로그인 페이지 리다이렉트, 가짜 ID의 yeyak 200 페이지, 정상 페이지
 - **수용 기준**:
-  - [ ] 404 응답 fixture → verdict 'broken' + 원인에 상태 코드
-  - [ ] 로그인 페이지로 리다이렉트된 fixture → verdict 'broken' + 원인에 리다이렉트 대상
-  - [ ] HTTP 200이지만 expectedText가 본문에 없는 fixture → verdict 'broken' (소프트 404)
-  - [ ] HTTP 200이고 expectedText가 본문에 있는 fixture → verdict 'ok'
+  - [x] 404 응답 fixture → verdict 'broken' + 원인에 상태 코드
+  - [x] 로그인 페이지로 리다이렉트된 fixture → verdict 'broken' + 원인에 리다이렉트 대상
+  - [x] HTTP 200이지만 expectedText가 본문에 없는 fixture → verdict 'broken' (소프트 404)
+  - [x] HTTP 200이고 expectedText가 본문에 있는 fixture → verdict 'ok'
 - **검증**: `bun run test -- verify`, `bun run test -- curl`
 
 ---
@@ -182,10 +182,10 @@
   - `services/verify/__fixtures__/yeyak-search.json` — 실제 검색 응답 저장본
   - `services/verify/targets.ts` + `.test.ts` — courts → 점검 항목 (모든 bookingLinks × 코트 + 소스별 데이터 엔드포인트, hidden 코트는 "숨김 상태"로 표기만)
 - **수용 기준**:
-  - [ ] 등록 ID가 broken이고 searchKeyword 검색 결과에 동일 시설 후보가 있으면 → verdict 'changed' + 후보 목록(ID·시설명·회차명)
-  - [ ] 검색 결과에 해당 시설이 없으면 → verdict 'broken' 유지 (후보 없음 — 수리 불가 신호)
-  - [ ] courts.ts에 코트·링크를 추가하면 점검 항목에 자동으로 나타난다 (targets 테스트)
-  - [ ] 요일유형별 링크가 2개인 코트는 점검 항목 2개로 확장된다
+  - [x] 등록 ID가 broken이고 searchKeyword 검색 결과에 동일 시설 후보가 있으면 → verdict 'changed' + 후보 목록(ID·시설명·회차명)
+  - [x] 검색 결과에 해당 시설이 없으면 → verdict 'broken' 유지 (후보 없음 — 수리 불가 신호)
+  - [x] courts.ts에 코트·링크를 추가하면 점검 항목에 자동으로 나타난다 (targets 테스트)
+  - [x] 요일유형별 링크가 2개인 코트는 점검 항목 2개로 확장된다
 - **검증**: `bun run test -- yeyak-search`, `bun run test -- targets`
 
 ---
@@ -201,18 +201,18 @@
   - `scripts/verify-courts.ts` — curl 조회 → 판정 → 리포트 저장 → 콘솔 요약 → exit code
   - `package.json` — `"verify:courts": "bun scripts/verify-courts.ts"`
 - **수용 기준**:
-  - [ ] 한 항목이 broken이어도 나머지 항목 점검이 계속되어 각자 ok로 판정되고, 요약에 실패 수가 집계되며 exit code 비0
-  - [ ] 전 항목 ok → 요약 "N개 점검, N개 정상", exit code 0, 리포트에 실행 시각 기록
-  - [ ] verdict 'changed'인 항목은 리포트에 대체 후보(ID·시설명·회차명)가 표시된다
-  - [ ] RepairAction(fixed/hidden)이 주어지면 리포트 조치 내역에 사유·시각과 함께 나타난다 (report 테스트)
+  - [x] 한 항목이 broken이어도 나머지 항목 점검이 계속되어 각자 ok로 판정되고, 요약에 실패 수가 집계되며 exit code 비0
+  - [x] 전 항목 ok → 요약 "N개 점검, N개 정상", exit code 0, 리포트에 실행 시각 기록
+  - [x] verdict 'changed'인 항목은 리포트에 대체 후보(ID·시설명·회차명)가 표시된다
+  - [x] RepairAction(fixed/hidden)이 주어지면 리포트 조치 내역에 사유·시각과 함께 나타난다 (report 테스트)
 - **검증**: `bun run test -- verify`, **실사이트 실행** `bun run verify:courts` → 전 항목 통과 (통과 못 하면 데이터를 고쳐서 통과시킨다 — 이 자체가 첫 점검), 출력 저장 `artifacts/court-link-verify/evidence/task-6-first-run.txt`
 
 ---
 
 ### Checkpoint: Tasks 4-6 이후
-- [ ] 모든 테스트 통과: `bun run test` (네트워크 없이)
-- [ ] 빌드 성공: `bun run build`
-- [ ] `bun run verify:courts` 실사이트 실행이 exit 0으로 끝나고 `artifacts/court-link-verify/report.md`가 생성됨 — 감지 체계가 end-to-end로 동작
+- [x] 모든 테스트 통과: `bun run test` (네트워크 없이)
+- [x] 빌드 성공: `bun run build`
+- [x] `bun run verify:courts` 실사이트 실행이 exit 0으로 끝나고 `artifacts/court-link-verify/report.md`가 생성됨 — 감지 체계가 end-to-end로 동작
 
 ---
 
@@ -227,8 +227,8 @@
 - **구현 대상**:
   - `.claude/skills/court-link-repair/SKILL.md` — 절차: ① `bun run verify:courts` 실행 → ② broken/changed 항목별 조사 (changed면 후보 검증, broken이면 검색·사이트 탐색) → ③ courts.ts 수정 → ④ 재검증 실행해 통과 확인 → ⑤ **report.md 조치 내역에 RepairAction(무엇을 왜 어떻게, 시각) 기록** → ⑥ 수정+리포트를 함께 커밋. 수리 불가면 ③′ hidden 처리 + courts.ts에 hiddenReason → ⑤′ report.md 조치 내역에 숨김 사유·시각 기록 → ⑥′ 커밋. 삭제 금지·재검증 없는 커밋 금지 불변 규칙 명시
 - **수용 기준**:
-  - [ ] 스킬 절차만 따라가면 시나리오 6(자동 수정+커밋)과 7(숨김+보고)의 성공 기준을 모두 충족할 수 있다 — 절차에 재검증·데이터 보존·리포트 기록 단계가 빠짐없이 존재
-  - [ ] 지난 장애 3종(하드 404, 리다이렉트, 소프트 404) 각각에 대한 조사 방법이 스킬에 담겨 있다
+  - [x] 스킬 절차만 따라가면 시나리오 6(자동 수정+커밋)과 7(숨김+보고)의 성공 기준을 모두 충족할 수 있다 — 절차에 재검증·데이터 보존·리포트 기록 단계가 빠짐없이 존재
+  - [x] 지난 장애 3종(하드 404, 리다이렉트, 소프트 404) 각각에 대한 조사 방법이 스킬에 담겨 있다
 - **검증**: Human review — 사용자가 SKILL.md를 읽고 "이 절차로 지난번 사고를 처리할 수 있었겠는가" 기준으로 승인. dry-run: courts.ts의 ID 하나를 일부러 틀리게 바꾼 뒤 스킬 절차대로 복구되는지 1회 시연, 증거 `artifacts/court-link-verify/evidence/task-7-dryrun.md`
 
 ---
@@ -244,7 +244,7 @@
 - **구현 대상**:
   - 클라우드 루틴 (매일 오전 1회): "저장소에서 `bun run verify:courts` 실행 → 실패 항목이 있으면 court-link-repair 스킬 절차로 수리 또는 숨김 → 리포트·수정을 main에 커밋·push. 재검증 통과 없이는 수정을 커밋하지 않는다. 코트 데이터 삭제 금지."
 - **수용 기준**:
-  - [ ] 루틴이 매일 1회 스케줄로 등록되어 목록에서 확인된다
+  - [x] 루틴이 매일 1회 스케줄로 등록되어 목록에서 확인된다
   - [ ] 수동 트리거 1회 실행 → 리포트 커밋이 main에 push되고, 커밋 내역과 리포트 기록이 일치한다
   - [ ] (실패 주입 시연) courts.ts에 깨진 ID를 하나 넣고 트리거 → 루틴이 수정 또는 숨김 커밋을 만들고, 수정된 값은 재검증을 통과한다
   - [ ] 숨김 처리가 일어난 경우 report.md 조치 내역에 해당 코트의 숨김 사유와 시각이 나타난다
