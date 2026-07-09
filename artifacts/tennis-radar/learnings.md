@@ -11,11 +11,10 @@ plan.md의 순서를 그대로 따름 — 재정렬 불필요.
 - **날씨 해상도 설계**: 코트 운영시간(06~22시)을 2h 블록 8개로 나눠 날씨를 조회 — gytennis/양평누리의 2h 슬롯 단위와 정확히 정렬됨. yeyak(1h 단위)은 시간칩을 안 쓰므로 문제 없음. 향후 1h 슬롯 코트가 추가되면 블록 세분화 필요.
 - **jsdom ResizeObserver 누락**: Radix Popper 계열(Tooltip/Popover/Select 등) 컴포넌트를 jsdom에서 렌더링하면 `ResizeObserver is not defined`로 실패. `vitest.setup.ts`에 전역 폴리필 추가로 해결 — **일반화 가능, 재발 가능성 높음**: 이후 Popover/Select 등 다른 shadcn 오버레이 컴포넌트 테스트 작성 시 이미 해결되어 있음.
 
-## 다음 세션 재시작
-- Task 12 (페이지 조립 + E2E)부터 `/execute-plan tennis-radar`로 재개
-- 완료: Task 1~11 (커밋 완료, `bun run test`/`bun run build` 모두 통과)
-- Task 12에서 조립 시 주의:
-  - `hooks/useGeolocation`(location) + `hooks/useCourtFilters`(radius, selectedHours) + `hooks/useCourtFilters`의 `courtMatchesTimeFilter` + `components/tennis/date-selector`(dates) + `/api/courts` fetch를 `app/page.tsx`에서 client island로 조립
-  - `TimeFilterButton`·`TimeFilterModal`은 만들어졌지만 아직 어디에도 import되어 있지 않음 — Task 12에서 처음 배치
-  - `courtMatchesTimeFilter(court, dates, selectedHours)`로 `aggregateCourts` 결과를 필터링 후 `CourtList`에 전달
-  - e2e는 `/api/courts` 응답을 fixture로 stub (services/aggregate.test.ts의 mock 패턴 참고)
+## Task 12 — 페이지 조립 + E2E
+
+- **완료**: Task 1~12 전체 커밋 완료 (`bun run test` 103/103, `bun run build`, `bun run test:e2e -- tennis-radar` 4/4 모두 통과). Browser MCP 대신 로컬 Playwright(headless chromium)로 스크린샷 증거 확보 — `artifacts/tennis-radar/evidence/task-12.png`.
+- **Playwright Clock API — `.install()` 대신 `.setFixedTime()`을 써야 함**: 오늘 날짜 카드는 "현재 시각 이전 슬롯 숨김" 로직(`court-card.tsx`)이 있어 e2e 실행 시각에 따라 결과가 달라지는 flakiness가 있었다. `page.clock.install({ time })`으로 고정하려 하니 Radix Dialog(TimeFilterModal)가 아예 열리지 않는 현상 발생 — `install()`은 `setTimeout` 등 타이머까지 페이크하여 Radix의 내부 애니메이션/포털 타이밍 로직을 깨뜨린다. `page.clock.setFixedTime(date)`(Date만 고정, 타이머는 실시간 유지)로 교체하니 정상 동작. **재발 가능성 높음, 일반화 가능**: "오늘"·"지금" 상대 로직을 검증하는 모든 향후 e2e 테스트에서 동일하게 걸릴 수 있음.
+- **judgment**: code-reviewer가 지적한 Important 4건(쿼리 파라미터 미검증→NaN 전파, tennis-radar 최상위 fetch에 `.catch()` 누락, yangpyeong 파서의 월 오매칭, 날씨 서비스 8배 중복 fetch)을 모두 직접 수정. 특히 yangpyeong 픽스처를 다시 읽다가 이전/다음달 링크(`sch_sym=YYYY-MM`)와 월 헤더(`.calendar1_yearmonth strong`)를 발견해, "현재 월만 조회 가능"이라는 기존 가정(Task 3 당시 기록)이 실제로는 틀렸음을 확인 — 파라미터로 정확한 월을 요청하고 렌더된 월을 검증하는 fail-closed 방식으로 수정. **재발 가능성**: 외부 사이트 파싱 시 초기에 "제약"으로 기록한 것이 실은 페이지에 이미 있는 기능을 못 찾은 것일 수 있다는 신호 — fixture HTML을 한 번 더 훑어보는 습관이 유용함.
+- **판단**: spec.md Scenario 5-1의 "선택 구간 내 시간대 칩을 우선 표시"(시각적 하이라이트)는 Task 11 plan.md 수용 기준에 애초에 없었고(필터링 자체는 동작) 이번에도 범위에 넣지 않음 — code-reviewer도 Critical/Important로 보지 않음. 향후 별도 요청 시 `time-chip.tsx`에 `highlighted?: boolean` prop 추가로 구현 가능.
+- **판단**: 날씨 서비스 중복 fetch(코트당 8회→1회 dedupe)는 Important로 분류해 직접 수정. 실제 KMA 엔드포인트는 여전히 미검증 상태이지만, 이 수정은 fetch 자체를 nx/ny/날짜 단위로 캐싱하는 순수 리팩터라 실제 API 응답 포맷과 무관하게 안전하게 적용 가능했음.
