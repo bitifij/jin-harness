@@ -4,7 +4,17 @@ import type { DayAvailability, Slot } from '@/types/tennis'
 export function parseYangpyeongPage(html: string, date: string): DayAvailability {
   try {
     const root = parse(html)
-    const day = String(parseInt(date.split('-')[2], 10))
+    const [year, month, dayStr] = date.split('-')
+    const day = String(parseInt(dayStr, 10))
+
+    // 페이지는 sch_sym으로 요청한 월의 달력을 통째로 렌더링한다. 서버가 파라미터를
+    // 무시하거나 포맷이 바뀌면 같은 일자(h6 텍스트)가 다른 달의 셀과 오매칭될 수 있으므로,
+    // 렌더링된 월(.calendar1_yearmonth strong)이 요청 월과 다르면 fail-closed 한다.
+    const renderedMonthText = root.querySelector('.calendar1_yearmonth strong')?.text ?? ''
+    const monthMatch = renderedMonthText.match(/(\d{4})\s*\.\s*(\d{1,2})/)
+    if (!monthMatch || monthMatch[1] !== year || parseInt(monthMatch[2], 10) !== parseInt(month, 10)) {
+      return { date, kind: 'unavailable', loadError: true }
+    }
 
     // 날짜 셀: <h6>N</h6> 또는 <h6><span ...>N</span></h6>
     const h6s = root.querySelectorAll('h6')

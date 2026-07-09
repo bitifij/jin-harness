@@ -68,4 +68,11 @@ describe('parseYangpyeongPage', () => {
     const result = parseYangpyeongPage('<html><body></body></html>', '2026-07-13')
     expect(result.loadError).toBe(true)
   })
+
+  it('페이지가 렌더링한 월과 요청 날짜의 월이 다르면 같은 일자를 오매칭하지 않고 loadError를 반환한다', () => {
+    // fixture는 2026년 7월 달력이다. 8월 13일을 요청하면 7월 13일 셀을 잘못 재사용하면 안 된다.
+    const result = parseYangpyeongPage(fixture, '2026-08-13')
+    expect(result.loadError).toBe(true)
+    expect(result.kind).toBe('unavailable')
+  })
 })

@@ -19,6 +19,7 @@ export function TennisRadar() {
   const [timeModalOpen, setTimeModalOpen] = useState(false)
   const [courts, setCourts] = useState<CourtWithAvailability[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     const params = new URLSearchParams({
@@ -29,10 +30,17 @@ export function TennisRadar() {
     })
     let cancelled = false
     setLoading(true)
+    setError(false)
     fetch(`/api/courts?${params}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`요청 실패: ${res.status}`)
+        return res.json()
+      })
       .then((data) => {
         if (!cancelled) setCourts(data.courts ?? [])
+      })
+      .catch(() => {
+        if (!cancelled) setError(true)
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -61,6 +69,8 @@ export function TennisRadar() {
       </div>
       {loading ? (
         <div className="p-6 text-center text-xs text-muted-foreground">불러오는 중...</div>
+      ) : error ? (
+        <div className="p-6 text-center text-xs text-muted-foreground">코트 정보를 불러오지 못했습니다.</div>
       ) : (
         <CourtList courts={filteredCourts} dates={dates} />
       )}

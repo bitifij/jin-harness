@@ -36,7 +36,7 @@ export function latLngToGrid(lat: number, lng: number): { nx: number; ny: number
   return { nx, ny }
 }
 
-interface KmaForecastItem {
+export interface KmaForecastItem {
   category: string
   fcstDate: string
   fcstTime: string

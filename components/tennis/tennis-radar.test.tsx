@@ -88,4 +88,13 @@ describe('TennisRadar', () => {
 
     await waitFor(() => expect(screen.getByText('대화코트')).toBeInTheDocument())
   })
+
+  it('/api/courts 요청이 실패하면 빈 목록 대신 에러 안내를 표시한다', async () => {
+    vi.mocked(fetch).mockRejectedValue(new Error('network down'))
+
+    renderRadar()
+
+    await waitFor(() => expect(screen.getByText('코트 정보를 불러오지 못했습니다.')).toBeInTheDocument())
+    expect(screen.queryByText('반경 내 코트가 없습니다.')).not.toBeInTheDocument()
+  })
 })
