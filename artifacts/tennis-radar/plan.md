@@ -322,9 +322,9 @@
   - `app/page.tsx` (RSC 셸 + client island 조립)
   - `e2e/tennis-radar.spec.ts` (API는 fixture 응답으로 stub)
 - **수용 기준**:
-  - [ ] 앱 진입 시 (여의도 fallback) 코트 목록이 거리순으로 렌더된다
-  - [ ] 반경 변경·날짜 선택·시간 필터가 목록에 반영된다
-  - [ ] 예약 버튼이 새 탭 링크를 가진다
+  - [x] 앱 진입 시 (여의도 fallback) 코트 목록이 거리순으로 렌더된다
+  - [x] 반경 변경·날짜 선택·시간 필터가 목록에 반영된다
+  - [x] 예약 버튼이 새 탭 링크를 가진다
 - **검증**: `bun run test:e2e -- tennis-radar`; Browser MCP — 실제 앱 이동해 목록·필터 동작 스크린샷 증거를 `artifacts/tennis-radar/evidence/task-12.png` 저장
 
 ---

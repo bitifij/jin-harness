@@ -49,7 +49,7 @@ export function CourtCard({ court, distanceKm, dates, availability, weather, now
     })
 
     return (
-      <Card>
+      <Card data-testid={`court-card-${court.id}`}>
         <CardHeader>
           <div className="flex items-start justify-between">
             <div>
@@ -64,7 +64,7 @@ export function CourtCard({ court, distanceKm, dates, availability, weather, now
             const avail = availability[date]
             return (
               <div key={date} className="flex items-center gap-2 border-t py-2 text-xs">
-                <span className="w-14 font-bold">{date.slice(5).replace('-', '/')}</span>
+                <span className="w-16 shrink-0 whitespace-nowrap font-bold">{date.slice(5).replace('-', '/')}</span>
                 <DayWeatherEmoji hints={weather[date]} />
                 {avail?.loadError ? (
                   <span className="ml-auto text-muted-foreground">현황 확인 불가</span>
@@ -102,7 +102,7 @@ export function CourtCard({ court, distanceKm, dates, availability, weather, now
   const href = court.deepLinkTemplate.replace('{date}', bookingDate)
 
   return (
-    <Card>
+    <Card data-testid={`court-card-${court.id}`}>
       <CardHeader>
         <div className="flex items-start justify-between">
           <div>
@@ -116,7 +116,7 @@ export function CourtCard({ court, distanceKm, dates, availability, weather, now
         {dateRows.map(({ date, isToday, loadError, slots }) => (
           <div key={date} className="border-t py-2 text-xs">
             <div className="mb-2 flex items-center gap-2">
-              <span className="w-14 font-bold">
+              <span className="w-16 shrink-0 whitespace-nowrap font-bold">
                 {date.slice(5).replace('-', '/')}
                 {isToday ? ' 오늘' : ''}
               </span>
