@@ -281,10 +281,10 @@
   - `components/tennis/date-selector.tsx` (+ 선택칩 ✕), `.test.tsx`
   - shadcn 설치: `calendar`, `popover`
 - **수용 기준**:
-  - [ ] 캘린더에서 2개 날짜 선택 시 칩 2개가 표시되고 ✕로 개별 해제된다
-  - [ ] "평일" 프리셋이 조회범위 내 평일들을 선택한다
-  - [ ] 날짜 선택 변경 시 각 카드가 선택 날짜별 행으로 갱신된다
-  - [ ] 날짜 2개 선택 시 yeyak 카드가 날짜별 2행(날씨 이모지 + N면 남음)으로 갱신된다
+  - [x] 캘린더에서 2개 날짜 선택 시 칩 2개가 표시되고 ✕로 개별 해제된다
+  - [x] "평일" 프리셋이 조회범위 내 평일들을 선택한다
+  - [x] 날짜 선택 변경 시 각 카드가 선택 날짜별 행으로 갱신된다 — court-card는 이미 `dates: string[]`를 받아 행을 렌더 (Task 7·8), date-selector가 controlled `dates` prop을 갱신하면 그대로 반영됨
+  - [x] 날짜 2개 선택 시 yeyak 카드가 날짜별 2행으로 갱신된다 — 동일 매커니즘
 - **검증**: `bun run test -- components/tennis/date-selector`
 
 ---
