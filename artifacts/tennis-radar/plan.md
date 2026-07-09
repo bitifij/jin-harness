@@ -173,10 +173,10 @@
   - `lib/weather/emoji.ts` (강수확률·강수량 → tier(clear/cloudy/rain/heavy) 매핑; 예보 해상도(3h/1h)→슬롯 매핑 규칙도 여기 문서화), `lib/weather/emoji.test.ts`
   - `.env.example` (`WEATHER_API_KEY=`)
 - **수용 기준**:
-  - [ ] 강수확률 0~20%→clear(☀️), 20~50%→cloudy, 50%+→rain, 강수량 임계 초과→heavy(⛈️)로 매핑된다
-  - [ ] 임의 시각의 예보를 코트 좌표 기준으로 시간블록 WeatherHint로 반환한다 (mock 응답 fixture 기반)
-  - [ ] 날씨 서비스는 사용자 위치가 아닌 각 코트의 lat/lng를 조회 좌표로 사용한다 (불변규칙)
-  - [ ] tier 매핑은 소스와 무관하게 동일 함수를 사용한다 (통일 보장)
+  - [x] 강수확률 0~20%→clear(☀️), 20~50%→cloudy, 50%+→rain, 강수량 임계 초과→heavy(⛈️)로 매핑된다
+  - [x] 임의 시각의 예보를 코트 좌표 기준으로 시간블록 WeatherHint로 반환한다 (mock 응답 fixture 기반)
+  - [x] 날씨 서비스는 사용자 위치가 아닌 각 코트의 lat/lng를 조회 좌표로 사용한다 (불변규칙) — `getHint(lat,lng,...)` 시그니처가 코트 좌표만 받음
+  - [x] tier 매핑은 소스와 무관하게 동일 함수를 사용한다 (통일 보장) — `mapWeatherTier` 단일 함수 경유
 - **검증**: `bun run test -- lib/weather/emoji`
 
 ---
@@ -331,6 +331,7 @@
 ---
 
 ## 미결정 항목
-- 기상청 격자 변환(위경도→nx,ny) 및 단기예보 제공 간격(3h/1h)을 시간블록에 매핑하는 세부 — Task 5에서 실제 응답 보고 확정
+- 기상청 격자 변환(위경도→nx,ny)은 공식 LCC 변환 공식으로 구현·테스트 완료. **단, 실제 서비스키로의 실호출 검증은 아직 안 됨** — `WEATHER_API_KEY` 발급 후 `services/weather/index.ts`의 `FORECAST_URL` 응답 스키마 재확인 필요
+- yeyak 캘린더 ajax 엔드포인트(`services/sources/yeyak.ts`)도 동일하게 실제 사이트 네트워크 요청으로 미검증 — 배포 전 확인 필요
 - yeyak 대상 코트 rsv_svc_id 목록 및 주간/야간 분리 여부 — config 시드 시 수집·확정 (분리 안 되면 시간필터에서 "시간 미상")
 - gytennis raw HTML의 available 아이콘 판별 셀렉터 — Task 2에서 실제 HTML fixture 확보 후 확정
