@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe: Tennis Radar</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root {
+    --w-bg: #f5f5f5;
+    --w-border: #ccc;
+    --w-text: #555;
+    --w-muted: #aaa;
+    --w-fill: #eee;
+  }
+  * {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    color: var(--w-text);
+  }
+  body { background: var(--w-bg); }
+  nav { position: sticky; top: 0; z-index: 40; background: var(--w-bg); border-bottom: 1px solid var(--w-border); }
+  nav button { cursor: pointer; font-size: 13px; }
+  nav button:hover { background: var(--w-fill); border-radius: 4px; }
+  nav button.active { font-weight: bold; border-bottom: 2px solid var(--w-text); }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .vp-toggle button {
+    font-size: 12px; padding: 2px 8px;
+    border: 1px solid var(--w-border); cursor: pointer; background: white;
+  }
+  .vp-toggle button:first-child { border-radius: 4px 0 0 4px; }
+  .vp-toggle button:last-child { border-radius: 0 4px 4px 0; border-left: none; }
+  .vp-toggle button.active { background: var(--w-text); color: white; }
+  body.viewport-mobile .screen-content {
+    max-width: 375px !important;
+    margin: 24px auto !important;
+    border: 2px solid var(--w-border);
+    border-radius: 24px;
+    min-height: 667px;
+    background: white;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 32px 16px !important;
+  }
+  .screen-notes {
+    background: #fffde7;
+    border-left: 3px solid #ffd54f;
+    padding: 12px 16px;
+    margin-top: 24px;
+    font-size: 13px;
+    border-radius: 0 4px 4px 0;
+  }
+  .screen-notes summary {
+    cursor: pointer; font-weight: bold; font-size: 12px;
+    color: #b0a050; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .screen-notes p { margin: 6px 0 2px; color: #777; }
+  .screen-notes ul { margin: 4px 0 0 16px; padding: 0; color: #777; }
+  .screen-notes li { margin: 2px 0; }
+
+  /* wireframe-specific */
+  .w-card { border: 1px solid var(--w-border); border-radius: 10px; background: white; }
+  .w-chip {
+    border: 1px solid var(--w-border); border-radius: 8px;
+    background: var(--w-fill); text-align: center; min-width: 62px;
+  }
+  .w-badge {
+    border: 1px solid var(--w-text); border-radius: 999px;
+    font-size: 11px; padding: 2px 10px; display: inline-block;
+  }
+  .w-btn {
+    border: 1px solid var(--w-text); border-radius: 8px;
+    text-align: center; cursor: pointer; background: white;
+  }
+  .w-btn-fill { background: var(--w-text); color: white; }
+  .w-btn-disabled { border-color: var(--w-muted); color: var(--w-muted); background: var(--w-fill); cursor: not-allowed; }
+  .w-tab { cursor: pointer; padding: 8px 0; text-align: center; border-bottom: 2px solid transparent; }
+  .w-tab.active { border-bottom-color: var(--w-text); font-weight: bold; color: var(--w-text); }
+  .w-tab:not(.active) { color: var(--w-muted); }
+  .w-info summary { cursor: pointer; list-style: none; }
+  .w-info summary::-webkit-details-marker { display: none; }
+  .w-info[open] .w-info-chevron { transform: rotate(180deg); }
+  /* time bar */
+  .w-hour-cell {
+    flex: 1; height: 40px; border: 1px solid var(--w-border); border-left: none;
+    cursor: pointer; display: flex; align-items: flex-end; justify-content: center;
+    font-size: 9px; padding-bottom: 2px; user-select: none;
+  }
+  .w-hour-cell:first-child { border-left: 1px solid var(--w-border); border-radius: 6px 0 0 6px; }
+  .w-hour-cell:last-child { border-radius: 0 6px 6px 0; }
+  .w-hour-cell.sel { background: var(--w-text); color: white; }
+  /* mini bar thumbnail (in time button) */
+  .w-mini { display: inline-flex; gap: 1px; }
+  .w-mini i { width: 4px; height: 12px; background: var(--w-fill); border-radius: 1px; display: block; }
+  .w-mini i.on { background: var(--w-text); }
+  /* uniform weather strip (identical on every card) */
+  .w-strip { display: flex; justify-content: space-between; gap: 2px; }
+  .w-wcell { flex: 1; text-align: center; font-size: 9px; color: var(--w-muted); line-height: 1.4; }
+  .w-wcell i { width: 12px; height: 12px; display: inline-block; }
+</style>
+</head>
+<body class="p-0 m-0 viewport-mobile">
+
+<nav class="flex items-center gap-4 px-6 py-2">
+  <span class="text-xs" style="color:var(--w-muted)">wireframe</span>
+  <button id="nav-0" onclick="show(0)" class="px-2 py-1">메인 목록</button>
+  <button id="nav-1" onclick="show(1)" class="px-2 py-1">시간 선택(모달)</button>
+  <button id="nav-2" onclick="show(2)" class="px-2 py-1">상태들</button>
+  <div class="vp-toggle flex ml-auto">
+    <button id="vp-desktop" onclick="setViewport('desktop')">Desktop</button>
+    <button id="vp-mobile" onclick="setViewport('mobile')" class="active">Mobile</button>
+  </div>
+</nav>
+
+<!-- ============ SCREEN 0 : 메인 목록 (base) ============ -->
+<div id="screen-0" class="screen" data-scenario="scenario-1">
+  <div class="screen-content @container max-w-5xl mx-auto p-6">
+
+    <!-- App header -->
+    <div class="flex items-center gap-2 mb-3">
+      <i data-lucide="radar" class="w-5 h-5"></i>
+      <span class="font-bold text-base">테니스 레이더</span>
+    </div>
+
+    <!-- Compact control bar -->
+    <div class="w-card p-3 mb-3 text-xs space-y-2">
+      <!-- location + radius on one row -->
+      <div class="flex items-center gap-2">
+        <i data-lucide="map-pin" class="w-4 h-4"></i>
+        <button class="font-bold flex items-center gap-1">여의도 트윈타워 <i data-lucide="chevron-down" class="w-3 h-3"></i></button>
+        <span class="ml-auto flex items-center gap-2">
+          <span style="color:var(--w-muted)">반경</span>
+          <input type="range" min="5" max="20" value="10" step="5" style="width:80px">
+          <span class="font-bold whitespace-nowrap">10km</span>
+        </span>
+      </div>
+      <div class="text-[10px]" style="color:var(--w-muted)">기본 위치(여의도) 사용 중 · <button class="underline" style="color:var(--w-text)">현재 위치</button></div>
+
+      <!-- dates -->
+      <div class="flex items-center gap-1 flex-wrap pt-1" style="border-top:1px solid var(--w-border)">
+        <button class="w-btn px-2 py-1 flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i><i data-lucide="chevron-down" class="w-3 h-3"></i></button>
+        <button class="w-badge">평일</button>
+        <button class="w-badge">주말</button>
+        <span class="w-badge" style="background:var(--w-text); color:white; border-color:var(--w-text)">7/22 ✕</span>
+        <span class="w-badge" style="background:var(--w-text); color:white; border-color:var(--w-text)">7/25 ✕</span>
+      </div>
+
+      <!-- time button with mini-bar thumbnail showing actual (discontinuous) selection -->
+      <button class="w-btn w-full flex items-center gap-2 px-2 py-1" onclick="show(1)">
+        <span class="flex items-center gap-1 whitespace-nowrap"><i data-lucide="clock" class="w-3 h-3"></i> 시간</span>
+        <span class="w-mini ml-1" id="time-thumb"></span>
+        <span class="whitespace-nowrap" style="color:var(--w-muted)">12-14, 18-22</span>
+        <i data-lucide="chevron-down" class="w-3 h-3 ml-auto"></i>
+      </button>
+    </div>
+
+    <div class="text-xs mb-3" style="color:var(--w-muted)">반경 10km · 7/22·25 · 시간 지정 · 3곳</div>
+
+    <!-- Card grid (multi-date strip view) -->
+    <div class="grid grid-cols-1 @md:grid-cols-2 gap-3">
+
+      <!-- CARD A: slot source (gytennis) — unified weather token per date -->
+      <div class="w-card p-4">
+        <div class="flex items-start justify-between mb-1">
+          <div>
+            <div class="font-bold text-sm">대화코트</div>
+            <div class="text-[11px]" style="color:var(--w-muted)">고양시 · gytennis</div>
+          </div>
+          <div class="text-xs text-right whitespace-nowrap"><i data-lucide="navigation" class="w-3 h-3 inline"></i> 8.4km</div>
+        </div>
+
+        <div class="py-2 text-xs" style="border-top:1px solid var(--w-border)">
+          <div class="flex items-center gap-2 mb-2"><span class="font-bold w-12">7/22</span><span class="w-badge ml-auto">3슬롯</span></div>
+          <div class="flex flex-wrap gap-1">
+            <span class="w-badge">14-16 ☀️</span><span class="w-badge">18-20 ☀️</span><span class="w-badge">20-22 🌧️</span>
+          </div>
+        </div>
+        <div class="py-2 text-xs" style="border-top:1px solid var(--w-border)">
+          <div class="flex items-center gap-2"><span class="font-bold w-12">7/25</span><span class="ml-auto" style="color:var(--w-muted)">마감</span></div>
+        </div>
+
+        <button class="w-btn w-btn-fill py-2 w-full text-sm flex items-center justify-center gap-1 mt-2">예약하기 <i data-lucide="external-link" class="w-3 h-3"></i></button>
+        <details class="w-info mt-2">
+          <summary class="flex items-center gap-1 text-xs py-1" style="color:var(--w-muted)"><i data-lucide="info" class="w-3 h-3"></i> 코트 정보<i data-lucide="chevron-down" class="w-3 h-3 w-info-chevron ml-auto"></i></summary>
+          <div class="text-xs mt-2 space-y-1 pl-1">
+            <div>📍 경기 고양시 일산서구 대화로 168</div><div>🎾 4면 · 하드</div><div>🕕 06:00~22:00</div><div>💰 5,000원/2시간</div><div>☎ 031-962-0030</div>
+          </div>
+        </details>
+      </div>
+
+      <!-- CARD B: slot source (양평누리) — SAME format as 대화코트 -->
+      <div class="w-card p-4">
+        <div class="flex items-start justify-between mb-1">
+          <div>
+            <div class="font-bold text-sm">양평누리체육공원</div>
+            <div class="text-[11px]" style="color:var(--w-muted)">영등포구 · 양평누리</div>
+          </div>
+          <div class="text-xs text-right whitespace-nowrap"><i data-lucide="navigation" class="w-3 h-3 inline"></i> 1.2km</div>
+        </div>
+
+        <div class="py-2 text-xs" style="border-top:1px solid var(--w-border)">
+          <div class="flex items-center gap-2 mb-2"><span class="font-bold w-12">7/22</span><span class="w-badge ml-auto">2슬롯</span></div>
+          <div class="flex flex-wrap gap-1"><span class="w-badge">18-20 ☀️</span><span class="w-badge">20-22 ☀️</span></div>
+        </div>
+        <div class="py-2 text-xs" style="border-top:1px solid var(--w-border)">
+          <div class="flex items-center gap-2 mb-2"><span class="font-bold w-12">7/25</span><span class="w-badge ml-auto">1슬롯</span></div>
+          <div class="flex flex-wrap gap-1"><span class="w-badge">16-18 🌧️</span></div>
+        </div>
+
+        <button class="w-btn w-btn-fill py-2 w-full text-sm flex items-center justify-center gap-1 mt-2">예약하기 <i data-lucide="external-link" class="w-3 h-3"></i></button>
+        <details class="w-info mt-2">
+          <summary class="flex items-center gap-1 text-xs py-1" style="color:var(--w-muted)"><i data-lucide="info" class="w-3 h-3"></i> 코트 정보<i data-lucide="chevron-down" class="w-3 h-3 w-info-chevron ml-auto"></i></summary>
+          <div class="text-xs mt-2 space-y-1 pl-1">
+            <div>📍 서울 영등포구 양평동</div><div>🎾 다면 · 하드</div><div>🕕 06:00~22:00</div>
+          </div>
+        </details>
+      </div>
+
+      <!-- CARD C: date source (yeyak) — SAME weather token, availability = N면 -->
+      <div class="w-card p-4">
+        <div class="flex items-start justify-between mb-1">
+          <div>
+            <div class="font-bold text-sm">서남센터 테니스장</div>
+            <div class="text-[11px]" style="color:var(--w-muted)">서울 · yeyak</div>
+          </div>
+          <div class="text-xs text-right whitespace-nowrap"><i data-lucide="navigation" class="w-3 h-3 inline"></i> 6.1km</div>
+        </div>
+
+        <div class="py-2 text-xs" style="border-top:1px solid var(--w-border)">
+          <div class="flex items-center gap-2"><span class="font-bold w-12">7/22</span><span>☀️→🌧️</span><span class="w-badge ml-auto">3면</span></div>
+        </div>
+        <div class="py-2 text-xs" style="border-top:1px solid var(--w-border)">
+          <div class="flex items-center gap-2"><span class="font-bold w-12">7/25</span><span>🌧️</span><span class="w-badge ml-auto">1면</span></div>
+        </div>
+        <div class="text-[10px] pt-1" style="color:var(--w-muted)">예약 시간대는 사이트에서 (yeyak은 날짜 단위)</div>
+
+        <button class="w-btn w-btn-fill py-2 w-full text-sm flex items-center justify-center gap-1 mt-2">예약하기 <i data-lucide="external-link" class="w-3 h-3"></i></button>
+        <details class="w-info mt-2">
+          <summary class="flex items-center gap-1 text-xs py-1" style="color:var(--w-muted)"><i data-lucide="info" class="w-3 h-3"></i> 코트 정보<i data-lucide="chevron-down" class="w-3 h-3 w-info-chevron ml-auto"></i></summary>
+          <div class="text-xs mt-2 space-y-1 pl-1">
+            <div>📍 서울 강서구 (서남물재생시설공단)</div><div>🎾 16면 · 하드</div><div>🕕 06:00~22:00</div><div>💰 5,000원/2시간</div><div>☎ 02-3660-2254</div>
+          </div>
+        </details>
+      </div>
+
+    </div>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>서비스의 메인 화면. 위치·반경·복수 날짜로 필터된 코트 목록. 혼합 해상도 + 날짜 스트립이 핵심.</p>
+        <ul>
+          <li>트리거: 앱 진입 시 위치 권한 결과에 따라 실위치 또는 여의도 기준으로 목록 표시</li>
+          <li>인터랙션: 위치 지정 / 반경 조절 / 캘린더로 복수 날짜 선택(평일·주말 프리셋) / 날짜 스트립 탭하면 그날 슬롯 펼침 / "코트 정보" 펼치기 / "예약하기" → 외부(새 탭)</li>
+          <li>카드 유형: 슬롯 소스(gytennis·양평누리)=날짜별 가능 슬롯 수→펼치면 시간칩+날씨, 날짜 소스(yeyak)=날짜별 N면 남음</li>
+          <li>시간대 필터: 블록 구분은 잠정 — yeyak 항목 구조(주간/야간 분리 여부) 확인 후 확정</li>
+          <li>날짜 1개만 선택 시엔 스트립 없이 그 날짜 상세가 바로 표시 (별도 상태)</li>
+        </ul>
+      </details>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ SCREEN 1 : 시간 선택 모달 ============ -->
+<div id="screen-1" class="screen" data-scenario="scenario-time">
+  <div class="screen-content @container max-w-5xl mx-auto p-6">
+
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">
+      시간 선택 (모달)
+    </h2>
+
+    <div class="w-card p-4">
+      <div class="flex items-center justify-between mb-1">
+        <span class="font-bold text-sm">가능한 시간대</span>
+        <i data-lucide="x" class="w-4 h-4 cursor-pointer" onclick="show(0)"></i>
+      </div>
+      <p class="text-xs mb-4" style="color:var(--w-muted)">막대에서 시간을 눌러 선택하세요. 이어서 누르면 연속 구간, 떨어뜨려 누르면 불연속(여러 구간)도 됩니다.</p>
+
+      <!-- horizontal hour bar 06~22 -->
+      <div class="flex mb-1" id="hour-bar"></div>
+      <div class="flex justify-between text-[9px] mb-4" style="color:var(--w-muted)">
+        <span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span><span>22</span>
+      </div>
+
+      <div class="text-xs mb-4">
+        <span style="color:var(--w-muted)">선택됨:</span>
+        <span id="hour-summary" class="font-bold">12:00~14:00, 18:00~22:00</span>
+      </div>
+
+      <div class="flex gap-2">
+        <button class="w-btn py-2 flex-1 text-sm" onclick="clearHours()">전체 해제</button>
+        <button class="w-btn w-btn-fill py-2 flex-1 text-sm" onclick="show(0)">적용</button>
+      </div>
+    </div>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>메인의 "시간" 버튼을 누르면 뜨는 창. 코트별 예약 단위가 달라 1시간 해상도로 선택.</p>
+        <ul>
+          <li>트리거: 메인 목록의 "시간" 버튼 클릭</li>
+          <li>인터랙션: 막대 셀 클릭으로 시간 선택(연속·불연속 모두) / "적용" → 목록에 필터 반영 / "전체 해제" → 필터 없음</li>
+          <li>전환: 적용·닫기 → 메인 목록으로 복귀</li>
+        </ul>
+      </details>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ SCREEN 2 : 상태 변형 갤러리 ============ -->
+<div id="screen-2" class="screen" data-scenario="scenario-2, scenario-4, scenario-7, scenario-11, scenario-12, scenario-14">
+  <div class="screen-content @container max-w-5xl mx-auto p-6">
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">상태 변형</h2>
+
+    <!-- 위치 허용 (fallback 안내 없음) -->
+    <div class="text-xs font-bold mb-1" style="color:var(--w-muted)">① 위치 허용 — fallback 안내 없음</div>
+    <div class="w-card p-3 mb-4 text-xs">
+      <div class="flex items-center gap-2">
+        <i data-lucide="map-pin" class="w-4 h-4"></i>
+        <span class="font-bold">현재 위치</span>
+        <span class="ml-auto flex items-center gap-2"><span style="color:var(--w-muted)">반경</span><input type="range" min="5" max="20" value="10" step="5" style="width:80px"><span class="font-bold">10km</span></span>
+      </div>
+      <div class="text-[10px] mt-1" style="color:var(--w-muted)">(기본 위치 안내 문구 없음 — 실위치 사용 중)</div>
+    </div>
+
+    <!-- 빈 목록 -->
+    <div class="text-xs font-bold mb-1" style="color:var(--w-muted)">② 빈 목록 — 반경 축소</div>
+    <div class="w-card p-6 mb-4 text-center text-xs" style="color:var(--w-muted)">
+      <i data-lucide="search-x" class="w-6 h-6 mx-auto mb-2"></i>
+      <div>현재 반경(5km) 내 코트가 없습니다.</div>
+      <div>반경을 늘려보세요.</div>
+    </div>
+
+    <!-- 슬롯 소스 마감 -->
+    <div class="text-xs font-bold mb-1" style="color:var(--w-muted)">③ 슬롯 소스 — 선택일 전부 마감</div>
+    <div class="w-card p-4 mb-4">
+      <div class="flex items-start justify-between mb-1">
+        <div><div class="font-bold text-sm">대화코트</div><div class="text-[11px]" style="color:var(--w-muted)">고양시 · gytennis</div></div>
+        <div class="text-xs whitespace-nowrap"><i data-lucide="navigation" class="w-3 h-3 inline"></i> 8.4km</div>
+      </div>
+      <div class="flex items-center gap-2 py-2 text-xs" style="border-top:1px solid var(--w-border)">
+        <span class="font-bold w-12">7/22</span><span class="flex items-center gap-1" style="color:var(--w-muted)"><i data-lucide="cloud-rain" class="w-3 h-3"></i> 강수 60%·1.2mm</span><span class="ml-auto" style="color:var(--w-muted)">마감</span>
+      </div>
+      <div class="flex items-center gap-2 py-2 text-xs" style="border-top:1px solid var(--w-border)">
+        <span class="font-bold w-12">7/25</span><span class="flex items-center gap-1" style="color:var(--w-muted)"><i data-lucide="cloud-rain" class="w-3 h-3"></i> 강수 80%·3mm</span><span class="ml-auto" style="color:var(--w-muted)">마감</span>
+      </div>
+      <button class="w-btn w-btn-disabled py-2 w-full text-sm mt-2">예약마감</button>
+    </div>
+
+    <!-- yeyak 0면 -->
+    <div class="text-xs font-bold mb-1" style="color:var(--w-muted)">④ yeyak — 0면(마감)</div>
+    <div class="w-card p-4 mb-4">
+      <div class="flex items-start justify-between mb-1">
+        <div><div class="font-bold text-sm">서남센터 테니스장</div><div class="text-[11px]" style="color:var(--w-muted)">서울 · yeyak</div></div>
+        <div class="text-xs whitespace-nowrap"><i data-lucide="navigation" class="w-3 h-3 inline"></i> 6.1km</div>
+      </div>
+      <div class="flex items-center gap-2 py-2 text-xs" style="border-top:1px solid var(--w-border)">
+        <span class="font-bold w-12">7/22</span><span class="flex items-center gap-1" style="color:var(--w-muted)"><i data-lucide="sun" class="w-3 h-3"></i> 강수 10%·0mm</span><span class="ml-auto" style="color:var(--w-muted)">마감(0면)</span>
+      </div>
+      <button class="w-btn py-2 w-full text-sm mt-2 flex items-center justify-center gap-1">사이트에서 확인하기 <i data-lucide="external-link" class="w-3 h-3"></i></button>
+    </div>
+
+    <!-- 현황 로드 실패 -->
+    <div class="text-xs font-bold mb-1" style="color:var(--w-muted)">⑤ 현황 로드 실패</div>
+    <div class="w-card p-4 mb-4">
+      <div class="flex items-start justify-between mb-1">
+        <div><div class="font-bold text-sm">성라코트</div><div class="text-[11px]" style="color:var(--w-muted)">고양시 · gytennis</div></div>
+        <div class="text-xs whitespace-nowrap"><i data-lucide="navigation" class="w-3 h-3 inline"></i> 3.0km</div>
+      </div>
+      <div class="flex items-center gap-2 py-2 text-xs" style="border-top:1px solid var(--w-border)">
+        <span class="font-bold w-12">7/22</span><span class="flex items-center gap-1" style="color:var(--w-muted)"><i data-lucide="sun" class="w-3 h-3"></i> 강수 10%·0mm</span>
+        <span class="ml-auto flex items-center gap-1" style="color:var(--w-muted)"><i data-lucide="alert-circle" class="w-3 h-3"></i> 현황 확인 불가</span>
+      </div>
+      <button class="w-btn py-2 w-full text-sm mt-2 flex items-center justify-center gap-1">사이트에서 직접 확인하기 <i data-lucide="external-link" class="w-3 h-3"></i></button>
+    </div>
+
+    <!-- 오늘 지난시간 숨김 -->
+    <div class="text-xs font-bold mb-1" style="color:var(--w-muted)">⑥ 오늘 — 지난 시간대 숨김 (현재 15:00)</div>
+    <div class="w-card p-4 mb-4">
+      <div class="flex items-start justify-between mb-1">
+        <div><div class="font-bold text-sm">양평누리체육공원</div><div class="text-[11px]" style="color:var(--w-muted)">영등포구 · 양평누리</div></div>
+        <div class="text-xs whitespace-nowrap"><i data-lucide="navigation" class="w-3 h-3 inline"></i> 1.2km</div>
+      </div>
+      <div class="py-2 text-xs" style="border-top:1px solid var(--w-border)">
+        <div class="flex items-center gap-2">
+          <span class="font-bold w-16">7/9 오늘</span><span class="flex items-center gap-1" style="color:var(--w-muted)"><i data-lucide="sun" class="w-3 h-3"></i> 강수 0%·0mm</span><span class="w-badge ml-auto">2슬롯</span>
+        </div>
+        <div class="flex flex-wrap gap-1 mt-1 pl-1"><span class="w-badge">18-20</span><span class="w-badge">20-22</span></div>
+        <div class="text-[10px] mt-1" style="color:var(--w-muted)">지난 시간대(06-08·10-12·14-16)는 숨김</div>
+      </div>
+      <button class="w-btn w-btn-fill py-2 w-full text-sm mt-2">예약하기</button>
+    </div>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>메인 목록 화면이 데이터 상태에 따라 갖는 변형들. 레이아웃은 동일, 카드/안내 상태만 다름.</p>
+        <ul>
+          <li>①: 실위치 허용 시 fallback 안내 제거 (시나리오 1 vs 2)</li>
+          <li>②: 반경 내 결과 0 (시나리오 4)</li>
+          <li>③④: 슬롯 소스·yeyak 각각 마감 (시나리오 11·12)</li>
+          <li>⑤: 소스 현황 로드 실패 — 날씨는 유지, 딥링크 활성 (시나리오 14)</li>
+          <li>⑥: 오늘 포함 시 현재 시각 이후만 (시나리오 7)</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+</div>
+
+<script>
+var currentScreen = 0;
+var screenIds = [];
+
+// time bar: hours 6..21 (each cell = h:00 ~ h+1:00)
+var selHours = {12:1,13:1,18:1,19:1,20:1,21:1};
+function buildHourBar() {
+  var bar = document.getElementById('hour-bar');
+  if (!bar) return;
+  var html = '';
+  for (var h = 6; h <= 21; h++) {
+    html += '<div class="w-hour-cell ' + (selHours[h] ? 'sel' : '') + '" data-hour="' + h + '" onclick="toggleHour(' + h + ')">' + (h % 3 === 0 ? h : '') + '</div>';
+  }
+  bar.innerHTML = html;
+  updateHourSummary();
+  buildTimeThumb();
+}
+function buildTimeThumb() {
+  var t = document.getElementById('time-thumb');
+  if (!t) return;
+  var html = '';
+  for (var h = 6; h <= 21; h++) html += '<i class="' + (selHours[h] ? 'on' : '') + '"></i>';
+  t.innerHTML = html;
+}
+// uniform weather data (2h resolution) — same object drives every card's strip
+var STRIP = {
+  '0722': [[6,'sun',0],[8,'sun',0],[10,'sun',0],[12,'sun',10],[14,'sun',10],[16,'cloud',20],[18,'cloud-rain',40],[20,'cloud-rain',60]],
+  '0725': [[6,'cloud',30],[8,'cloud-rain',50],[10,'cloud-rain',60],[12,'cloud-rain',70],[14,'cloud-rain',60],[16,'cloud-rain',55],[18,'cloud-rain',50],[20,'cloud',40]],
+  'today':[[6,'sun',0],[8,'sun',0],[10,'sun',0],[12,'sun',0],[14,'sun',0],[16,'sun',0],[18,'sun',0],[20,'cloud',10]]
+};
+function renderStrips() {
+  document.querySelectorAll('[data-strip]').forEach(function(el) {
+    var d = STRIP[el.getAttribute('data-strip')] || [];
+    el.innerHTML = d.map(function(c) {
+      return '<div class="w-wcell"><div>' + ('0'+c[0]).slice(-2) + '</div><i data-lucide="' + c[1] + '"></i><div>' + c[2] + '%</div></div>';
+    }).join('');
+  });
+}
+function toggleHour(h) {
+  if (selHours[h]) delete selHours[h]; else selHours[h] = 1;
+  buildHourBar();
+}
+function clearHours() { selHours = {}; buildHourBar(); }
+function updateHourSummary() {
+  var el = document.getElementById('hour-summary');
+  if (!el) return;
+  var hrs = Object.keys(selHours).map(Number).sort(function(a,b){return a-b;});
+  if (!hrs.length) { el.textContent = '(전체)'; return; }
+  var ranges = [], start = hrs[0], prev = hrs[0];
+  for (var i = 1; i < hrs.length; i++) {
+    if (hrs[i] === prev + 1) { prev = hrs[i]; }
+    else { ranges.push([start, prev]); start = hrs[i]; prev = hrs[i]; }
+  }
+  ranges.push([start, prev]);
+  el.textContent = ranges.map(function(r){
+    return ('0'+r[0]).slice(-2) + ':00~' + ('0'+(r[1]+1)).slice(-2) + ':00';
+  }).join(', ');
+}
+function show(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('screen-' + id).classList.add('active');
+  document.querySelectorAll('nav button[id^="nav-"]').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('nav-' + id).classList.add('active');
+  currentScreen = screenIds.indexOf(id);
+}
+function setViewport(mode) {
+  document.body.classList.remove('viewport-mobile', 'viewport-desktop');
+  document.body.classList.add('viewport-' + mode);
+  document.querySelectorAll('.vp-toggle button').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('vp-' + mode).classList.add('active');
+}
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('nav button[id^="nav-"]').forEach(function(b) {
+    screenIds.push(parseInt(b.id.replace('nav-', '')));
+  });
+  var first = document.querySelector('nav button[id^="nav-"]');
+  if (first) first.click();
+  buildHourBar();
+  renderStrips();
+  lucide.createIcons();
+});
+</script>
+</body>
+</html>
