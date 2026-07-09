@@ -1,0 +1,25 @@
+$ bun scripts/verify-courts.ts
+코트 링크 검증 — 18개 항목 (기준 날짜 2026-07-10)
+
+✅ 대화코트 · 예약 링크 — HTTP 200
+✅ 삼송유수지코트 · 예약 링크 — HTTP 200
+✅ 성라코트 · 예약 링크 — HTTP 200
+✅ 성사전천후코트 · 예약 링크 — HTTP 200
+✅ 성사실외코트 · 예약 링크 — HTTP 200
+✅ 중산코트 · 예약 링크 — HTTP 200
+✅ 충장코트 · 예약 링크 — HTTP 200
+✅ 킨텍스유수지코트 · 예약 링크 — HTTP 200
+✅ 토당코트 · 예약 링크 — HTTP 200
+✅ 화정코트 · 예약 링크 — HTTP 200
+✅ 양평누리 테니스장 · 예약 링크 — HTTP 200
+✅ 양평누리 테니스장 · 데이터 조회(sch_sym) — HTTP 200
+✅ 잠원한강공원 테니스장 · 평일 예약 링크 — HTTP 200
+✅ 잠원한강공원 테니스장 · 주말·공휴일 예약 링크 — HTTP 200
+✅ 광나루한강공원 테니스장 · 평일 예약 링크 — HTTP 200
+✅ 광나루한강공원 테니스장 · 주말·공휴일 예약 링크 — HTTP 200
+✅ 홍은테니스장 · 평일 예약 링크 — HTTP 200
+✅ 홍은테니스장 · 주말·공휴일 예약 링크 — HTTP 200
+⏭️  yeyak 잔여 현황 캘린더 ajax — WAF가 비브라우저 접근을 차단해 자동 점검 불가 — 알려진 제약 (learnings.md 참조)
+
+요약: 18개 점검 — 정상 18, 깨짐 0, 변경 감지 0
+리포트: /Users/jin/project/agentic/jin-harness/jin-harness/.claude/worktrees/ecstatic-ellis-a1d6e7/artifacts/court-link-verify/report.md
