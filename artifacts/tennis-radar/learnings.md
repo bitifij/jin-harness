@@ -12,5 +12,10 @@ plan.md의 순서를 그대로 따름 — 재정렬 불필요.
 - **jsdom ResizeObserver 누락**: Radix Popper 계열(Tooltip/Popover/Select 등) 컴포넌트를 jsdom에서 렌더링하면 `ResizeObserver is not defined`로 실패. `vitest.setup.ts`에 전역 폴리필 추가로 해결 — **일반화 가능, 재발 가능성 높음**: 이후 Popover/Select 등 다른 shadcn 오버레이 컴포넌트 테스트 작성 시 이미 해결되어 있음.
 
 ## 다음 세션 재시작
-- Task 8 (yeyak 카드 + 로드실패 통일)부터 `/execute-plan tennis-radar`로 재개
-- 완료: Task 1~7 (커밋 완료, `bun run test`/`bun run build` 모두 통과)
+- Task 12 (페이지 조립 + E2E)부터 `/execute-plan tennis-radar`로 재개
+- 완료: Task 1~11 (커밋 완료, `bun run test`/`bun run build` 모두 통과)
+- Task 12에서 조립 시 주의:
+  - `hooks/useGeolocation`(location) + `hooks/useCourtFilters`(radius, selectedHours) + `hooks/useCourtFilters`의 `courtMatchesTimeFilter` + `components/tennis/date-selector`(dates) + `/api/courts` fetch를 `app/page.tsx`에서 client island로 조립
+  - `TimeFilterButton`·`TimeFilterModal`은 만들어졌지만 아직 어디에도 import되어 있지 않음 — Task 12에서 처음 배치
+  - `courtMatchesTimeFilter(court, dates, selectedHours)`로 `aggregateCourts` 결과를 필터링 후 `CourtList`에 전달
+  - e2e는 `/api/courts` 응답을 fixture로 stub (services/aggregate.test.ts의 mock 패턴 참고)

@@ -298,11 +298,11 @@
   - `components/tennis/time-filter-modal.tsx` (막대 셀 토글, 연속·불연속), `components/tennis/time-filter-button.tsx` (미니막대 썸네일)
   - `hooks/useCourtFilters.ts` (겹침 판정: 선택 구간 ∩ 코트 슬롯), `.test.tsx`
 - **수용 기준**:
-  - [ ] 18:00~22:00 선택 시 그 구간에 가능 슬롯 없는 슬롯 소스 코트가 목록에서 빠진다
-  - [ ] 1시간제·2시간제 코트 모두 구간과 겹치면 노출된다
-  - [ ] 12-14 + 18-22 불연속 선택이 가능하다 (버튼 썸네일의 시각적 반영은 E2E Task 12에서 검증)
-  - [ ] yeyak 코트는 필터 적용 시 "시간 미상"으로 유지된다
-  - [ ] 해제 시 전체 코트가 복원된다
+  - [x] 18:00~22:00 선택 시 그 구간에 가능 슬롯 없는 슬롯 소스 코트가 목록에서 빠진다 — `courtMatchesTimeFilter`
+  - [x] 1시간제·2시간제 코트 모두 구간과 겹치면 노출된다
+  - [x] 12-14 + 18-22 불연속 선택이 가능하다 (버튼 썸네일의 시각적 반영은 E2E Task 12에서 검증)
+  - [x] yeyak 코트는 필터 적용 시 "시간 미상"으로 유지된다
+  - [x] 해제 시 전체 코트가 복원된다 (`selectedHours.length === 0` → 항상 통과)
 - **검증**: `bun run test -- components/tennis/time-filter-modal hooks`
 
 ---
