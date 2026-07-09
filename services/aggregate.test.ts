@@ -97,4 +97,23 @@ describe('aggregateCourts', () => {
     expect(fetchYeyakCalendar).toHaveBeenCalledWith(weekdayId, wednesday)
     expect(fetchYeyakCalendar).toHaveBeenCalledWith(weekendId, saturday)
   })
+
+  it('hidden 코트는 반경 내에 있어도 목록에서 제외된다', async () => {
+    vi.mocked(fetchGytennisDaily).mockResolvedValue({ date: DATE, kind: 'slot', slots: [] })
+    vi.mocked(fetchYangpyeongDaily).mockResolvedValue({ date: DATE, kind: 'slot', slots: [] })
+    vi.mocked(fetchYeyakCalendar).mockResolvedValue({ date: DATE, kind: 'count', remaining: 3, capacity: 10 })
+
+    const { courts } = await import('@/config/courts')
+    const target = courts.find((c) => c.id === 'yangpyeong-1')!
+    target.hidden = true
+    target.hiddenReason = '테스트용 숨김'
+    try {
+      const result = await aggregateCourts(YEOUIDO_FALLBACK.lat, YEOUIDO_FALLBACK.lng, 50, [DATE])
+      expect(result.find((c) => c.id === 'yangpyeong-1')).toBeUndefined()
+      expect(result.length).toBeGreaterThan(0)
+    } finally {
+      delete target.hidden
+      delete target.hiddenReason
+    }
+  })
 })

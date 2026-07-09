@@ -29,6 +29,9 @@ export interface Court {
   lng: number
   bookingLinks: BookingLink[]
   searchKeyword?: string  // 예약 ID 로테이션 시 대체 ID를 찾는 사이트 검색 키워드
+  // 수리 불가 코트는 삭제하지 않고 숨긴다 (복구 가능해야 하므로 데이터 보존)
+  hidden?: boolean
+  hiddenReason?: string
   slotUnitMinutes: number | Record<string, number>
   info: CourtInfo
 }

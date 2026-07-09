@@ -61,6 +61,7 @@ export async function aggregateCourts(
   dates: string[],
 ): Promise<CourtWithAvailability[]> {
   const withinRadius = courts
+    .filter((court) => !court.hidden)
     .map((court) => ({ court, distanceKm: haversineKm(lat, lng, court.lat, court.lng) }))
     .filter(({ distanceKm }) => distanceKm <= radiusKm)
     .sort((a, b) => a.distanceKm - b.distanceKm)
